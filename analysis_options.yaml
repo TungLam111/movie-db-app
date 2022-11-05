@@ -1,0 +1,53 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  strong-mode:
+    # Will become the default once non-nullable types land
+    # https://github.com/dart-lang/sdk/issues/31410#issuecomment-510683629
+    implicit-casts: false
+
+  errors:
+    # treat missing required parameters as an error (not a hint)
+    missing_required_param: error
+
+    # treat missing returns as an error (not a hint)
+    missing_return: error
+
+    # allow having TODOs in code
+    todo: ignore
+
+    # Reassignment should be treated as warning (not a hint)
+    parameter_assignments: warning
+
+  exclude: [build/**, lib/**.freezed.dart, lib/**.g.dart, lib/generated/**]
+
+linter:
+  rules:
+    avoid_print: true
+    # Uncomment to disable the `avoid_print` rule
+    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # Make constructors the first thing in every class
+    sort_constructors_first: true
+
+    # The new tabs vs. spaces. Choose wisely
+    prefer_single_quotes: true
+
+    # Blindly follow the Flutter code style, which prefers types everywhere
+    always_specify_types: true
+
+    # Back to the 80s
+    lines_longer_than_80_chars: true
+    require_trailing_commas: true
+
+    depend_on_referenced_packages: false
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
