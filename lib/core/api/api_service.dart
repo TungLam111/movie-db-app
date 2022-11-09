@@ -89,7 +89,10 @@ abstract class ApiService {
   });
 
   @GET('/movie/{id}')
-  Future<MovieDetailResponse> getMovieDetail({@Path() required int id});
+  Future<MovieDetailResponse> getMovieDetail({
+    @Path() required int id,
+    @Query('api_key') String apiKey = Urls.apiKey,
+  });
 
   @GET('/movie/{id}/recommendations')
   Future<MovieResponse> getMovieRecommendations({

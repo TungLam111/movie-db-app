@@ -9,7 +9,6 @@ import 'package:mock_bloc_stream/injection/di_locator.dart' as di;
 import 'package:mock_bloc_stream/home/bloc/home_bloc.dart';
 import 'package:mock_bloc_stream/home/home_page.dart';
 import 'package:mock_bloc_stream/home/watchlist_page.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/movie_detail_bloc.dart';
 import 'package:mock_bloc_stream/movie/presentation/bloc/movie_images_bloc.dart';
 import 'package:mock_bloc_stream/movie/presentation/bloc/movie_list_bloc.dart';
 import 'package:mock_bloc_stream/movie/presentation/bloc/popular_movies_bloc.dart';
@@ -37,7 +36,7 @@ import 'package:mock_bloc_stream/utils/styles.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
-Future<void> main() async {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   runApp(const MyApp());
@@ -48,6 +47,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use shared providers between states
+
     return MultiProvider(
       providers: <SingleChildWidget>[
         Provider<AppBloc>(create: (_) => di.locator<AppBloc>()),
@@ -69,9 +70,9 @@ class MyApp extends StatelessWidget {
         Provider<TopRatedMoviesBloc>(
           create: (_) => di.locator<TopRatedMoviesBloc>(),
         ),
-        Provider<MovieDetailBloc>(
-          create: (_) => di.locator<MovieDetailBloc>(),
-        ),
+        // Provider<MovieDetailBloc>(
+        //   create: (_) => di.locator<MovieDetailBloc>(),
+        // ),
         Provider<MovieImagesBloc>(
           create: (_) => di.locator<MovieImagesBloc>(),
         ),
@@ -124,7 +125,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         builder: EasyLoading.init(),
-        home: const LoginPage(),
+        home: const HomePage(),
         navigatorObservers: <NavigatorObserver>[routeObserver],
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {

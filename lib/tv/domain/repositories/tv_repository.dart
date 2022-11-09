@@ -15,11 +15,6 @@ import 'package:mock_bloc_stream/tv/data/models/tv_model.dart';
 import 'package:mock_bloc_stream/tv/data/models/tv_detail_response.dart';
 import 'package:mock_bloc_stream/tv/data/models/media_tv_image_model.dart';
 
-import '../../domain/entities/media_image.dart';
-import '../../domain/entities/tv.dart';
-import '../../domain/entities/tv_detail.dart';
-import '../../domain/entities/tv_season_episode.dart';
-
 part '../../data/repositories/tv_repository_impl.dart';
 
 abstract class TvRepository {

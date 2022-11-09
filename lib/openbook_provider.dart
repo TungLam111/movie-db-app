@@ -217,8 +217,7 @@ class OpenbookProviderState extends State<OpenbookProvider> {
 }
 
 class _OpenbookProvider extends InheritedWidget {
-  // ignore: prefer_const_constructors_in_immutables
-  _OpenbookProvider({Key? key, required this.data, required Widget child})
+  const _OpenbookProvider({Key? key, required this.data, required Widget child})
       : super(key: key, child: child);
   final OpenbookProviderState data;
 

@@ -1,48 +1,61 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/movie/presentation/bloc/movie_detail_bloc.dart';
 import 'package:mock_bloc_stream/utils/color.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 import 'package:mock_bloc_stream/utils/urls.dart';
-import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../domain/entities/genre.dart';
-import '../../domain/entities/movie.dart';
-import '../../domain/entities/movie_detail.dart';
-import '../widgets/minimal_detail.dart';
+import 'package:mock_bloc_stream/movie/domain/entities/genre.dart';
+import 'package:mock_bloc_stream/movie/domain/entities/movie.dart';
+import 'package:mock_bloc_stream/movie/domain/entities/movie_detail.dart';
+import 'package:mock_bloc_stream/movie/presentation/widgets/minimal_detail.dart';
+import 'package:mock_bloc_stream/injection/di_locator.dart' as di;
 
-class MovieDetailPage extends StatefulWidget {
+class MovieDetailPage extends StatelessWidget {
   const MovieDetailPage({Key? key, required this.id}) : super(key: key);
   static const String routeName = '/movie-detail';
 
   final int id;
 
   @override
-  State<MovieDetailPage> createState() => _MovieDetailPageState();
+  Widget build(BuildContext context) {
+    return BlocProviderLamcute<MovieDetailBloc>(
+      bloc: di.locator<MovieDetailBloc>()
+        ..fetchMovieDetail(id)
+        ..loadWatchlistStatus(id),
+      child: _MovieDetailPage(
+        id: id,
+      ),
+    );
+  }
 }
 
-class _MovieDetailPageState extends State<MovieDetailPage> {
+class _MovieDetailPage extends StatefulWidget {
+  const _MovieDetailPage({Key? key, required this.id}) : super(key: key);
+
+  final int id;
+
+  @override
+  State<_MovieDetailPage> createState() => _MovieDetailPageState();
+}
+
+class _MovieDetailPageState extends State<_MovieDetailPage> {
   @override
   void initState() {
     super.initState();
-    Future<void>.microtask(() {
-      Provider.of<MovieDetailBloc>(context, listen: false)
-          .fetchMovieDetail(widget.id);
-      Provider.of<MovieDetailBloc>(context, listen: false)
-          .loadWatchlistStatus(widget.id);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: RequiredStreamBuilder<RequestState>(
-        stream: Provider.of<MovieDetailBloc>(context, listen: false)
-            .movieStateStream,
+        stream:
+            BlocProviderLamcute.of<MovieDetailBloc>(context).movieStateStream,
         builder: (
           BuildContext context,
           AsyncSnapshot<RequestState> snapshot,
@@ -51,8 +64,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.data == RequestState.loaded) {
             return RequiredStreamBuilder<MovieDetail?>(
-              stream:
-                  Provider.of<MovieDetailBloc>(context).getMovieDetailStream,
+              stream: BlocProviderLamcute.of<MovieDetailBloc>(context)
+                  .getMovieDetailStream,
               builder: (_, AsyncSnapshot<MovieDetail?> asyncSnapshot2) {
                 if (!asyncSnapshot2.hasData) {
                   return const SizedBox();
@@ -60,16 +73,18 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 final MovieDetail movie = asyncSnapshot2.data!;
                 return MovieDetailContent(
                   movie: movie,
-                  recommendations: Provider.of<MovieDetailBloc>(context)
-                      .recommendationsValue,
-                  isAddedToWatchlist: Provider.of<MovieDetailBloc>(context)
-                      .isAddedToWatchlistValue,
+                  recommendations:
+                      BlocProviderLamcute.of<MovieDetailBloc>(context)
+                          .recommendationsValue,
+                  isAddedToWatchlist:
+                      BlocProviderLamcute.of<MovieDetailBloc>(context)
+                          .isAddedToWatchlistValue,
                 );
               },
             );
           } else {
             return Text(
-              Provider.of<MovieDetailBloc>(context, listen: false).getMessage,
+              BlocProviderLamcute.of<MovieDetailBloc>(context).getMessage,
             );
           }
         },
@@ -212,22 +227,20 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                     key: const Key('movieToWatchlist'),
                     onPressed: () async {
                       if (!widget.isAddedToWatchlist) {
-                        await Provider.of<MovieDetailBloc>(
+                        await BlocProviderLamcute.of<MovieDetailBloc>(
                           context,
-                          listen: false,
                         ).addToWatchlist(widget.movie);
                       } else {
-                        await Provider.of<MovieDetailBloc>(
+                        await BlocProviderLamcute.of<MovieDetailBloc>(
                           context,
-                          listen: false,
                         ).removeFromWatchlist(widget.movie);
                       }
                       if (!mounted) {
                         return;
                       }
-                      final String message = Provider.of<MovieDetailBloc>(
+                      final String message =
+                          BlocProviderLamcute.of<MovieDetailBloc>(
                         context,
-                        listen: false,
                       ).watchlistMessageValue;
 
                       if (message ==
@@ -248,7 +261,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: widget.isAddedToWatchlist
+                      backgroundColor: widget.isAddedToWatchlist
                           ? ColorConstant.kGrey850
                           : Colors.white,
                       minimumSize: Size(
@@ -352,14 +365,16 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
 
   Widget _showRecommendations() {
     return RequiredStreamBuilder<RequestState>(
-      stream: Provider.of<MovieDetailBloc>(context).recommendationsStateStream,
+      stream: BlocProviderLamcute.of<MovieDetailBloc>(context)
+          .recommendationsStateStream,
       builder: (
         BuildContext context,
         AsyncSnapshot<RequestState> snapshot,
       ) {
         if (snapshot.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Movie>>(
-            stream: Provider.of<MovieDetailBloc>(context).recommendationStream,
+            stream: BlocProviderLamcute.of<MovieDetailBloc>(context)
+                .recommendationStream,
             builder: (_, AsyncSnapshot<List<Movie>> snapshot2) {
               if (!snapshot2.hasData) {
                 return const SliverToBoxAdapter(
@@ -439,7 +454,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
           return SliverToBoxAdapter(
             child: Center(
               child: Text(
-                Provider.of<MovieDetailBloc>(context).getMessage,
+                BlocProviderLamcute.of<MovieDetailBloc>(context).getMessage,
               ),
             ),
           );

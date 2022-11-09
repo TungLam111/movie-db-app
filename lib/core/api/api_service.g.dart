@@ -315,9 +315,12 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<MovieDetailResponse> getMovieDetail({required id}) async {
+  Future<MovieDetailResponse> getMovieDetail({
+    required id,
+    apiKey = Urls.apiKey,
+  }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'api_key': apiKey};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
