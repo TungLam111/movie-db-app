@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         Provider<AuthBloc>(
           create: (_) => di.locator<AuthBloc>(),
         ),
-        // /// General
+        /// General
         Provider<HomeBloc>(
           create: (_) => di.locator<HomeBloc>(),
         ),

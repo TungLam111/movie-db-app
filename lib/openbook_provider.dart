@@ -69,7 +69,7 @@ class OpenbookProvider extends StatefulWidget {
 }
 
 class OpenbookProviderState extends State<OpenbookProvider> {
-  late ApiService apiService = widget.apiService;
+  late final ApiService _apiService = widget.apiService;
   late TvDatabaseHelper tvDatabaseHelper = widget.tvDatabaseHelper;
   late MovieDatabaseHelper movieDatabaseHelper = widget.movieDatabaseHelper;
 
@@ -124,10 +124,10 @@ class OpenbookProviderState extends State<OpenbookProvider> {
   void initState() {
     super.initState();
     tvLocalDataSource = TvLocalDataSourceImpl(databaseHelper: tvDatabaseHelper);
-    tvRemoteDataSource = TvRemoteDataSourceImpl(client: apiService);
+    tvRemoteDataSource = TvRemoteDataSourceImpl(client: _apiService);
     movieLocalDataSource =
         MovieLocalDataSourceImpl(databaseHelper: movieDatabaseHelper);
-    movieRemoteDataSource = MovieRemoteDataSourceImpl(client: apiService);
+    movieRemoteDataSource = MovieRemoteDataSourceImpl(client: _apiService);
     tvRepository = TvRepositoryImpl(
       remoteDataSource: tvRemoteDataSource,
       localDataSource: tvLocalDataSource,
