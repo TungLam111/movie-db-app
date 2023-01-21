@@ -2,7 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/bloc_provider.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/movie_detail_bloc.dart';
+import 'package:mock_bloc_stream/movie/presentation/bloc/movie_detail/movie_detail_bloc.dart';
 import 'package:mock_bloc_stream/utils/color.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';

@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/movie/domain/entities/movie.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/top_rated_movies_bloc.dart';
+import 'package:mock_bloc_stream/movie/presentation/bloc/top_rated_movies/top_rated_movies_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:provider/provider.dart';

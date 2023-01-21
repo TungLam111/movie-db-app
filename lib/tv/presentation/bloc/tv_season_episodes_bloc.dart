@@ -18,7 +18,7 @@ class TvSeasonEpisodesBloc extends BaseBloc {
 
   final BehaviorSubject<RequestState> _seasonEpisodesState =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
-  Stream<RequestState> get seasonEpisodesState =>
+  Stream<RequestState> get seasonEpisodesStateStream =>
       _seasonEpisodesState.stream.asBroadcastStream();
 
   Future<void> fetchTvSeasonEpisodes(int id, int seasonNumber) async {

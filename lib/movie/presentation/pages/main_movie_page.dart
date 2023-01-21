@@ -4,8 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/movie/domain/entities/media_image.dart';
 import 'package:mock_bloc_stream/movie/domain/entities/movie.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/movie_images_bloc.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/movie_list_bloc.dart';
+import 'package:mock_bloc_stream/movie/presentation/bloc/movie_images/movie_images_bloc.dart';
+import 'package:mock_bloc_stream/movie/presentation/bloc/movie_list/movie_list_bloc.dart';
 import 'package:mock_bloc_stream/movie/presentation/widgets/shimmer_playing_widget.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
@@ -38,7 +38,7 @@ class _MainMoviePageState extends State<MainMoviePage> {
             () => Provider.of<MovieImagesBloc>(context, listen: false)
                 .fetchMovieImages(
               Provider.of<MovieListBloc>(context, listen: false)
-                  .nowPlayingMovies[0]
+                  .nowPlayingMovies()[0]
                   .id,
             ),
           );

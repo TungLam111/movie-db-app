@@ -4,8 +4,8 @@ import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../domain/entities/media_image.dart';
-import '../../domain/usecases/get_movie_images_usecase.dart';
+import '../../../domain/entities/media_image.dart';
+import '../../../domain/usecases/get_movie_images_usecase.dart';
 
 class MovieImagesBloc extends BaseBloc {
   MovieImagesBloc({required this.getMovieImagesUsecase});

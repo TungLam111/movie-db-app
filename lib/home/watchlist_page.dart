@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/watchlist_movie_bloc.dart';
+import 'package:mock_bloc_stream/movie/presentation/bloc/watchlist_movie/watchlist_movie_bloc.dart';
 import 'package:mock_bloc_stream/movie/presentation/pages/movie_watchlist_page.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/watchlist_tv_bloc.dart';
 import 'package:mock_bloc_stream/tv/presentation/pages/tv_watchlist_page.dart';

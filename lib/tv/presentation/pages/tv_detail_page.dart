@@ -72,6 +72,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
                         stream: Provider.of<TvDetailBloc>(context)
                             .recommendationsStream,
                         builder: (____, AsyncSnapshot<List<Tv>> snap4) {
+                          if (!snap4.hasData) {
+                            return const SizedBox();
+                          }
                           return TvDetailContent(
                             tv: tv,
                             seasonNumber: tv.numberOfSeasons,
@@ -242,7 +245,9 @@ class _TvDetailContentState extends State<TvDetailContent>
                       ),
                       const SizedBox(width: 16.0),
                       Text(
-                        _showEpisodeDuration(widget.tv.episodeRunTime[0]),
+                        widget.tv.episodeRunTime.isNotEmpty
+                            ? _showEpisodeDuration(widget.tv.episodeRunTime[0])
+                            : '',
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 16.0,
@@ -433,27 +438,15 @@ class _TvDetailContentState extends State<TvDetailContent>
                 : const SliverToBoxAdapter();
           },
         ),
-        Builder(
-          builder: (BuildContext context) {
-            _tabController.addListener(() {
-              if (!_tabController.indexIsChanging) {
-                setState(() {
-                  _selectedIndex = _tabController.index;
-                });
-              }
-            });
-
-            return _selectedIndex == 0
-                ? SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 24.0),
-                    sliver: _showSeasonEpisodes(),
-                  )
-                : SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 24.0),
-                    sliver: _showRecommendations(),
-                  );
-          },
-        ),
+        _selectedIndex == 0
+            ? SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 24.0),
+                sliver: _showSeasonEpisodes(),
+              )
+            : SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 24.0),
+                sliver: _showRecommendations(),
+              )
       ],
     );
   }
@@ -487,85 +480,111 @@ class _TvDetailContentState extends State<TvDetailContent>
       stream: Provider.of<TvDetailBloc>(context).recommendationsStateStream,
       builder: (
         BuildContext context,
-        AsyncSnapshot<RequestState> data,
+        AsyncSnapshot<RequestState> snapshot,
       ) {
-        if (data.data == RequestState.loaded) {
+        if (!snapshot.hasData) {
+          return const SliverToBoxAdapter(
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.data == null) {
+          return const SliverToBoxAdapter(
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Tv>>(
             stream: Provider.of<TvDetailBloc>(context).recommendationsStream,
             builder: (
               __,
-              AsyncSnapshot<List<Tv>> data2,
+              AsyncSnapshot<List<Tv>> snapshot2,
             ) {
-              return SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    final Tv recommendation = data2.data![index];
-                    return FadeInUp(
-                      from: 20,
-                      duration: const Duration(milliseconds: 500),
-                      child: GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10.0),
-                                topRight: Radius.circular(10.0),
-                              ),
-                            ),
-                            context: context,
-                            builder: (BuildContext context) {
-                              return MinimalDetail(
-                                tv: recommendation,
-                              );
-                            },
-                          );
-                        },
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(4.0)),
-                          child: CachedNetworkImage(
-                            imageUrl: Urls.imageUrl(recommendation.posterPath!),
-                            placeholder: (BuildContext context, String url) =>
-                                Shimmer.fromColors(
-                              baseColor: ColorConstant.kGrey850,
-                              highlightColor: ColorConstant.kGrey800,
-                              child: Container(
-                                height: 170.0,
-                                width: 120.0,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8.0),
+              if (!snapshot2.hasData) {
+                return const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (snapshot2.data?.isNotEmpty == true) {
+                return SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      final Tv recommendation = snapshot2.data![index];
+                      return FadeInUp(
+                        from: 20,
+                        duration: const Duration(milliseconds: 500),
+                        child: GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.0),
+                                  topRight: Radius.circular(10.0),
                                 ),
                               ),
+                              context: context,
+                              builder: (BuildContext context) {
+                                return MinimalDetail(
+                                  tv: recommendation,
+                                );
+                              },
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(4.0)),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  Urls.imageUrl(recommendation.posterPath!),
+                              placeholder: (BuildContext context, String url) =>
+                                  Shimmer.fromColors(
+                                baseColor: ColorConstant.kGrey850,
+                                highlightColor: ColorConstant.kGrey800,
+                                child: Container(
+                                  height: 170.0,
+                                  width: 120.0,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (
+                                BuildContext context,
+                                String url,
+                                dynamic error,
+                              ) =>
+                                  const Icon(Icons.error),
+                              height: 180.0,
+                              fit: BoxFit.cover,
                             ),
-                            errorWidget: (
-                              BuildContext context,
-                              String url,
-                              dynamic error,
-                            ) =>
-                                const Icon(Icons.error),
-                            height: 180.0,
-                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                    );
-                  },
-                  childCount: data2.data!.length,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
-                  childAspectRatio: 0.7,
-                  crossAxisCount: (MediaQuery.of(context).orientation ==
-                          Orientation.portrait)
-                      ? 3
-                      : 4,
-                ),
+                      );
+                    },
+                    childCount: snapshot2.data!.length,
+                  ),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    childAspectRatio: 0.7,
+                    crossAxisCount: (MediaQuery.of(context).orientation ==
+                            Orientation.portrait)
+                        ? 3
+                        : 4,
+                  ),
+                );
+              }
+
+              return const SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
               );
             },
           );
-        } else if (data.data == RequestState.error) {
+        }
+
+        if (snapshot.data == RequestState.error) {
           return SliverToBoxAdapter(
             child: Center(
               child: Text(
@@ -573,127 +592,143 @@ class _TvDetailContentState extends State<TvDetailContent>
               ),
             ),
           );
-        } else {
-          return const SliverToBoxAdapter(
-            child: Center(child: CircularProgressIndicator()),
-          );
         }
+
+        return const SliverToBoxAdapter(
+          child: Center(child: CircularProgressIndicator()),
+        );
       },
     );
   }
 
   Widget _showSeasonEpisodes() {
     return RequiredStreamBuilder<RequestState>(
-      stream: Provider.of<TvSeasonEpisodesBloc>(context).seasonEpisodesState,
+      stream:
+          Provider.of<TvSeasonEpisodesBloc>(context).seasonEpisodesStateStream,
       builder: (BuildContext context, AsyncSnapshot<RequestState> snap1) {
+        if (!snap1.hasData) {
+          return const SliverToBoxAdapter(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
         if (snap1.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<TvSeasonEpisode>>(
             stream: Provider.of<TvSeasonEpisodesBloc>(context).seasonEpisodes,
             builder: (__, AsyncSnapshot<List<TvSeasonEpisode>> snap2) {
-              return snap2.data!.isEmpty
-                  ? const SliverToBoxAdapter(
-                      child: Center(
-                        child: Text(
-                          'Comming Soon!',
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      ),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                          final TvSeasonEpisode seasonEpisode =
-                              snap2.data![index];
-                          return FadeInUp(
-                            from: 20,
-                            duration: const Duration(milliseconds: 500),
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 24.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+              if (!snap2.hasData) {
+                return const SliverToBoxAdapter(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              if (snap2.data?.isNotEmpty == true) {
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      final TvSeasonEpisode seasonEpisode = snap2.data![index];
+                      return FadeInUp(
+                        from: 20,
+                        duration: const Duration(milliseconds: 500),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
                                 children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: ClipRRect(
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(4.0),
-                                          ),
-                                          child: CachedNetworkImage(
-                                            fit: BoxFit.cover,
-                                            imageUrl: Urls.imageUrl(
-                                              seasonEpisode.stillPath!,
-                                            ),
-                                            placeholder: (
-                                              BuildContext context,
-                                              String url,
-                                            ) =>
-                                                const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ),
-                                            errorWidget: (
-                                              BuildContext context,
-                                              String url,
-                                              dynamic error,
-                                            ) =>
-                                                const Icon(Icons.error),
-                                          ),
-                                        ),
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(4.0),
                                       ),
-                                      const SizedBox(width: 16.0),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            SizedBox(
-                                              width: 200.0,
-                                              child: Text(
-                                                '''${seasonEpisode.episodeNumber}. ${seasonEpisode.name}''',
-                                                style: const TextStyle(
-                                                  fontSize: 14.0,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              DateFormat('MMM dd, yyyy').format(
-                                                DateTime.parse(
-                                                  seasonEpisode.airDate,
-                                                ),
-                                              ),
-                                              style: const TextStyle(
-                                                color: Colors.white70,
-                                                fontSize: 12.0,
-                                                letterSpacing: 1.2,
-                                              ),
-                                            ),
-                                          ],
+                                      child: CachedNetworkImage(
+                                        fit: BoxFit.cover,
+                                        imageUrl: Urls.imageUrl(
+                                          seasonEpisode.stillPath!,
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      seasonEpisode.overview,
-                                      style: const TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 10.0,
-                                        letterSpacing: 1.2,
+                                        placeholder: (
+                                          BuildContext context,
+                                          String url,
+                                        ) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                        errorWidget: (
+                                          BuildContext context,
+                                          String url,
+                                          dynamic error,
+                                        ) =>
+                                            const Icon(Icons.error),
                                       ),
                                     ),
                                   ),
+                                  const SizedBox(width: 16.0),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 200.0,
+                                          child: Text(
+                                            '''${seasonEpisode.episodeNumber}. ${seasonEpisode.name}''',
+                                            style: const TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          DateFormat('MMM dd, yyyy').format(
+                                            DateTime.parse(
+                                              seasonEpisode.airDate,
+                                            ),
+                                          ),
+                                          style: const TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12.0,
+                                            letterSpacing: 1.2,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 ],
                               ),
-                            ),
-                          );
-                        },
-                        childCount: snap2.data!.length,
-                      ),
-                    );
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  seasonEpisode.overview,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 10.0,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    childCount: snap2.data!.length,
+                  ),
+                );
+              } else {
+                return const SliverToBoxAdapter(
+                  child: Center(
+                    child: Text(
+                      'Comming Soon!',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ),
+                );
+              }
             },
           );
         }
