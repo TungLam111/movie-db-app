@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base_bloc.dart';
 import 'package:mock_bloc_stream/movie/domain/entities/movie.dart';
@@ -32,8 +34,9 @@ class WatchlistMovieBloc extends BaseBloc {
         message.add(failure.message);
       },
       (List<Movie> moviesData) {
-        _watchlistState.add(RequestState.error);
+        _watchlistState.add(RequestState.loaded);
         _watchlistMovies.add(moviesData);
+        log(moviesData.length.toString());
       },
     );
   }

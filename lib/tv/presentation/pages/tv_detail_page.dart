@@ -53,7 +53,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
         ) {
           if (snap1.data == RequestState.loading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snap1.data == RequestState.loaded) {
+          }
+
+          if (snap1.data == RequestState.loaded) {
             return RequiredStreamBuilder<TvDetail?>(
               stream: Provider.of<TvDetailBloc>(context).tv,
               builder: (__, AsyncSnapshot<TvDetail?> snap2) {
@@ -91,9 +93,9 @@ class _TvDetailPageState extends State<TvDetailPage> {
                 );
               },
             );
-          } else {
-            return Text(Provider.of<TvDetailBloc>(context).getMessage);
           }
+
+          return Text(Provider.of<TvDetailBloc>(context).getMessage);
         },
       ),
     );
