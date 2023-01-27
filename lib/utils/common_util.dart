@@ -1,11 +1,9 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
-import 'package:stream_transform/stream_transform.dart';
 
 abstract class Failure extends Equatable {
   const Failure(this.message);
@@ -36,12 +34,6 @@ class DatabaseException implements Exception {
 
 final RouteObserver<ModalRoute<dynamic>> routeObserver =
     RouteObserver<ModalRoute<dynamic>>();
-
-EventTransformer<E> debounce<E>(Duration duration) {
-  return (Stream<E> events, Stream<E> Function(E) mapper) {
-    return events.debounce(duration).switchMap(mapper);
-  };
-}
 
 class RequiredStreamBuilder<T> extends StreamBuilder<T> {
   const RequiredStreamBuilder({

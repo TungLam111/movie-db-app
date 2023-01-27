@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/tv/domain/entities/tv_season_episode.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/tv_detail_bloc.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/tv_season_episodes_bloc.dart';
@@ -10,7 +11,6 @@ import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 import 'package:mock_bloc_stream/utils/urls.dart';
-import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:mock_bloc_stream/tv/domain/entities/genre.dart';
@@ -29,24 +29,38 @@ class TvDetailPage extends StatefulWidget {
 }
 
 class _TvDetailPageState extends State<TvDetailPage> {
+  late TvDetailBloc _tvDetailBloc;
+  late TvSeasonEpisodesBloc _tvSeasonEpisodesBloc;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _tvDetailBloc = BlocProvider.of<TvDetailBloc>(context);
+    _tvSeasonEpisodesBloc = BlocProvider.of<TvSeasonEpisodesBloc>(context);
     Future<void>.microtask(() {
-      Provider.of<TvDetailBloc>(context, listen: false)
-          .fetchTvDetail(widget.id);
-      Provider.of<TvDetailBloc>(context, listen: false)
-          .loadWatchlistStatus(widget.id);
-      Provider.of<TvSeasonEpisodesBloc>(context, listen: false)
-          .fetchTvSeasonEpisodes(widget.id, 1);
+      _tvDetailBloc.fetchTvDetail(widget.id);
+      _tvDetailBloc.loadWatchlistStatus(widget.id);
+      _tvSeasonEpisodesBloc.fetchTvSeasonEpisodes(widget.id, 1);
     });
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _tvDetailBloc.dispose();
+    _tvSeasonEpisodesBloc.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: RequiredStreamBuilder<RequestState>(
-        stream: Provider.of<TvDetailBloc>(context).tvStateStream,
+        stream: _tvDetailBloc.tvStateStream,
         builder: (
           BuildContext context,
           AsyncSnapshot<RequestState> snap1,
@@ -57,13 +71,12 @@ class _TvDetailPageState extends State<TvDetailPage> {
 
           if (snap1.data == RequestState.loaded) {
             return RequiredStreamBuilder<TvDetail?>(
-              stream: Provider.of<TvDetailBloc>(context).tv,
+              stream: _tvDetailBloc.tv,
               builder: (__, AsyncSnapshot<TvDetail?> snap2) {
                 final TvDetail? tv = snap2.data;
                 if (tv == null) return const SizedBox();
                 return RequiredStreamBuilder<RequestState>(
-                  stream: Provider.of<TvDetailBloc>(context)
-                      .recommendationsStateStream,
+                  stream: _tvDetailBloc.recommendationsStateStream,
                   builder: (___, AsyncSnapshot<RequestState> snap3) {
                     if (snap3.data == RequestState.loading) {
                       return const Center(
@@ -71,8 +84,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
                       );
                     } else if (snap3.data == RequestState.loaded) {
                       return RequiredStreamBuilder<List<Tv>>(
-                        stream: Provider.of<TvDetailBloc>(context)
-                            .recommendationsStream,
+                        stream: _tvDetailBloc.recommendationsStream,
                         builder: (____, AsyncSnapshot<List<Tv>> snap4) {
                           if (!snap4.hasData) {
                             return const SizedBox();
@@ -82,20 +94,19 @@ class _TvDetailPageState extends State<TvDetailPage> {
                             seasonNumber: tv.numberOfSeasons,
                             recommendations: snap4.data!,
                             isAddedToWatchlist:
-                                Provider.of<TvDetailBloc>(context)
-                                    .isAddedToWatchlist,
+                                _tvDetailBloc.isAddedToWatchlist,
                           );
                         },
                       );
                     }
-                    return Text(Provider.of<TvDetailBloc>(context).getMessage);
+                    return Text(_tvDetailBloc.getMessage);
                   },
                 );
               },
             );
           }
 
-          return Text(Provider.of<TvDetailBloc>(context).getMessage);
+          return Text(_tvDetailBloc.getMessage);
         },
       ),
     );
@@ -264,22 +275,20 @@ class _TvDetailContentState extends State<TvDetailContent>
                     key: const Key('tvToWatchlist'),
                     onPressed: () async {
                       if (!widget.isAddedToWatchlist) {
-                        await Provider.of<TvDetailBloc>(
+                        await BlocProvider.of<TvDetailBloc>(
                           context,
-                          listen: false,
                         ).addToWatchlist(widget.tv);
                       } else {
-                        await Provider.of<TvDetailBloc>(
+                        await BlocProvider.of<TvDetailBloc>(
                           context,
-                          listen: false,
                         ).removeFromWatchlist(widget.tv);
                       }
                       if (!mounted) {
                         return;
                       }
-                      final String message =
-                          Provider.of<TvDetailBloc>(context, listen: false)
-                              .watchlistMessage;
+                      final String message = BlocProvider.of<TvDetailBloc>(
+                        context,
+                      ).watchlistMessage;
 
                       if (message == TvDetailBloc.watchlistAddSuccessMessage ||
                           message ==
@@ -404,9 +413,8 @@ class _TvDetailContentState extends State<TvDetailContent>
                                     _currentSeason = value!;
                                   });
 
-                                  Provider.of<TvSeasonEpisodesBloc>(
+                                  BlocProvider.of<TvSeasonEpisodesBloc>(
                                     context,
-                                    listen: false,
                                   ).fetchTvSeasonEpisodes(
                                     widget.tv.id,
                                     _currentSeason,
@@ -479,7 +487,7 @@ class _TvDetailContentState extends State<TvDetailContent>
 
   Widget _showRecommendations() {
     return RequiredStreamBuilder<RequestState>(
-      stream: Provider.of<TvDetailBloc>(context).recommendationsStateStream,
+      stream: BlocProvider.of<TvDetailBloc>(context).recommendationsStateStream,
       builder: (
         BuildContext context,
         AsyncSnapshot<RequestState> snapshot,
@@ -497,7 +505,8 @@ class _TvDetailContentState extends State<TvDetailContent>
         }
         if (snapshot.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Tv>>(
-            stream: Provider.of<TvDetailBloc>(context).recommendationsStream,
+            stream:
+                BlocProvider.of<TvDetailBloc>(context).recommendationsStream,
             builder: (
               __,
               AsyncSnapshot<List<Tv>> snapshot2,
@@ -590,7 +599,7 @@ class _TvDetailContentState extends State<TvDetailContent>
           return SliverToBoxAdapter(
             child: Center(
               child: Text(
-                Provider.of<TvDetailBloc>(context).getMessage,
+                BlocProvider.of<TvDetailBloc>(context).getMessage,
               ),
             ),
           );
@@ -605,8 +614,8 @@ class _TvDetailContentState extends State<TvDetailContent>
 
   Widget _showSeasonEpisodes() {
     return RequiredStreamBuilder<RequestState>(
-      stream:
-          Provider.of<TvSeasonEpisodesBloc>(context).seasonEpisodesStateStream,
+      stream: BlocProvider.of<TvSeasonEpisodesBloc>(context)
+          .seasonEpisodesStateStream,
       builder: (BuildContext context, AsyncSnapshot<RequestState> snap1) {
         if (!snap1.hasData) {
           return const SliverToBoxAdapter(
@@ -617,7 +626,8 @@ class _TvDetailContentState extends State<TvDetailContent>
         }
         if (snap1.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<TvSeasonEpisode>>(
-            stream: Provider.of<TvSeasonEpisodesBloc>(context).seasonEpisodes,
+            stream:
+                BlocProvider.of<TvSeasonEpisodesBloc>(context).seasonEpisodes,
             builder: (__, AsyncSnapshot<List<TvSeasonEpisode>> snap2) {
               if (!snap2.hasData) {
                 return const SliverToBoxAdapter(
@@ -738,7 +748,7 @@ class _TvDetailContentState extends State<TvDetailContent>
           return SliverToBoxAdapter(
             child: Center(
               child: Text(
-                Provider.of<TvSeasonEpisodesBloc>(context).getMessage,
+                BlocProvider.of<TvSeasonEpisodesBloc>(context).getMessage,
               ),
             ),
           );

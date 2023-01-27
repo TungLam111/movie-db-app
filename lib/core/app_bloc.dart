@@ -10,14 +10,14 @@ class AppBloc extends BaseBloc {
   final UserService userService;
   final LanguageService languageService;
 
-  final BehaviorSubject<String> appStateMessage =
+  final BehaviorSubject<String> appStateMessageSubject =
       BehaviorSubject<String>.seeded('');
-  Stream<String> get appStateStream => appStateMessage.stream;
-  String get getAppStateMessage => appStateMessage.value;
+  Stream<String> get appStateStream => appStateMessageSubject.stream;
+  String get getAppStateMessage => appStateMessageSubject.value;
 
   @override
   void dispose() {
-    appStateMessage.close();
+    appStateMessageSubject.close();
     super.dispose();
   }
 }

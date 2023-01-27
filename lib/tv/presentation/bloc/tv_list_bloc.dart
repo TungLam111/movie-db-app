@@ -15,100 +15,100 @@ class TvListBloc extends BaseBloc {
     required this.getPopularTvsUsecase,
     required this.getTopRatedTvsUsecase,
   });
-  final BehaviorSubject<List<Tv>> _onTheAirTvs =
+  final BehaviorSubject<List<Tv>> _onTheAirTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
   Stream<List<Tv>> get onTheAirTvsStream =>
-      _onTheAirTvs.stream.asBroadcastStream();
-  List<Tv> get onTheAirTvs => _onTheAirTvs.value;
+      _onTheAirTvsSubject.stream.asBroadcastStream();
+  List<Tv> get onTheAirTvs => _onTheAirTvsSubject.value;
 
-  final BehaviorSubject<RequestState> _onTheAirTvsState =
+  final BehaviorSubject<RequestState> _onTheAirTvsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get onTheAirTvsStateStream =>
-      _onTheAirTvsState.stream.asBroadcastStream();
+      _onTheAirTvsStateSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<List<Tv>> _popularTvs =
+  final BehaviorSubject<List<Tv>> _popularTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
   Stream<List<Tv>> get popularTvsStream =>
-      _popularTvs.stream.asBroadcastStream();
+      _popularTvsSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _popularTvsState =
+  final BehaviorSubject<RequestState> _popularTvsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get popularTvsStateStream =>
-      _popularTvsState.stream.asBroadcastStream();
+      _popularTvsStateSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<List<Tv>> _topRatedTvs =
+  final BehaviorSubject<List<Tv>> _topRatedTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
   Stream<List<Tv>> get topRatedTvsStream =>
-      _topRatedTvs.stream.asBroadcastStream();
+      _topRatedTvsSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _topRatedTvsState =
+  final BehaviorSubject<RequestState> _topRatedTvsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get topRatedTvsStateStream =>
-      _topRatedTvsState.stream.asBroadcastStream();
+      _topRatedTvsStateSubject.stream.asBroadcastStream();
 
   final GetOnTheAirTvsUsecase getOnTheAirTvsUsecase;
   final GetPopularTvsUsecase getPopularTvsUsecase;
   final GetTopRatedTvsUsecase getTopRatedTvsUsecase;
 
   Future<void> fetchOnTheAirTvs() async {
-    _onTheAirTvsState.add(RequestState.loading);
+    _onTheAirTvsStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Tv>> result =
         await getOnTheAirTvsUsecase.execute();
     result.fold(
       (Failure failure) {
-        _onTheAirTvsState.add(RequestState.error);
-        message.add(failure.message);
+        _onTheAirTvsStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (List<Tv> tvsData) {
-        _onTheAirTvsState.add(RequestState.loaded);
-        _onTheAirTvs.add(tvsData);
+        _onTheAirTvsStateSubject.add(RequestState.loaded);
+        _onTheAirTvsSubject.add(tvsData);
       },
     );
   }
 
   Future<void> fetchPopularTvs() async {
-    _popularTvsState.add(RequestState.loading);
+    _popularTvsStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Tv>> result =
         await getPopularTvsUsecase.execute();
     result.fold(
       (Failure failure) {
-        _popularTvsState.add(RequestState.error);
-        message.add(failure.message);
+        _popularTvsStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (List<Tv> tvsData) {
-        _popularTvsState.add(RequestState.loaded);
-        _popularTvs.add(tvsData);
+        _popularTvsStateSubject.add(RequestState.loaded);
+        _popularTvsSubject.add(tvsData);
       },
     );
   }
 
   Future<void> fetchTopRatedTvs() async {
-    _topRatedTvsState.add(RequestState.loading);
+    _topRatedTvsStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Tv>> result =
         await getTopRatedTvsUsecase.execute();
     result.fold(
       (Failure failure) {
-        _topRatedTvsState.add(RequestState.error);
-        message.add(failure.message);
+        _topRatedTvsStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (List<Tv> tvsData) {
-        _topRatedTvsState.add(RequestState.loaded);
-        _topRatedTvs.add(tvsData);
+        _topRatedTvsStateSubject.add(RequestState.loaded);
+        _topRatedTvsSubject.add(tvsData);
       },
     );
   }
 
   @override
   void dispose() {
-    _onTheAirTvs.close();
-    _onTheAirTvsState.close();
-    _popularTvs.close();
-    _popularTvsState.close();
-    _topRatedTvs.close();
-    _topRatedTvsState.close();
+    _onTheAirTvsSubject.close();
+    _onTheAirTvsStateSubject.close();
+    _popularTvsSubject.close();
+    _popularTvsStateSubject.close();
+    _topRatedTvsSubject.close();
+    _topRatedTvsStateSubject.close();
     super.dispose();
   }
 }

@@ -12,30 +12,30 @@ class WatchlistMovieBloc extends BaseBloc {
   WatchlistMovieBloc({required this.getWatchlistMoviesUsecase});
   final GetWatchlistMoviesUsecase getWatchlistMoviesUsecase;
 
-  final BehaviorSubject<List<Movie>> _watchlistMovies =
+  final BehaviorSubject<List<Movie>> _watchlistMoviesSubject =
       BehaviorSubject<List<Movie>>.seeded(<Movie>[]);
   Stream<List<Movie>> get watchlistMoviesStream =>
-      _watchlistMovies.stream.asBroadcastStream();
+      _watchlistMoviesSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _watchlistState =
+  final BehaviorSubject<RequestState> _watchlistStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get watchlistStateStream =>
-      _watchlistState.stream.asBroadcastStream();
+      _watchlistStateSubject.stream.asBroadcastStream();
 
   Future<void> fetchWatchlistMovies() async {
-    _watchlistState.add(RequestState.loading);
+    _watchlistStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Movie>> result =
         await getWatchlistMoviesUsecase.execute();
 
     result.fold(
       (Failure failure) {
-        _watchlistState.add(RequestState.error);
-        message.add(failure.message);
+        _watchlistStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (List<Movie> moviesData) {
-        _watchlistState.add(RequestState.loaded);
-        _watchlistMovies.add(moviesData);
+        _watchlistStateSubject.add(RequestState.loaded);
+        _watchlistMoviesSubject.add(moviesData);
         log(moviesData.length.toString());
       },
     );
@@ -43,8 +43,8 @@ class WatchlistMovieBloc extends BaseBloc {
 
   @override
   void dispose() {
-    _watchlistMovies.close();
-    _watchlistState.close();
+    _watchlistMoviesSubject.close();
+    _watchlistStateSubject.close();
     super.dispose();
   }
 }

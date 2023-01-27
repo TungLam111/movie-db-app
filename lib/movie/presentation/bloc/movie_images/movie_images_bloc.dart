@@ -11,39 +11,39 @@ class MovieImagesBloc extends BaseBloc {
   MovieImagesBloc({required this.getMovieImagesUsecase});
   final GetMovieImagesUsecase getMovieImagesUsecase;
 
-  final BehaviorSubject<MediaImage?> _movieImages =
+  final BehaviorSubject<MediaImage?> _movieImagesSubject =
       BehaviorSubject<MediaImage?>.seeded(null);
   Stream<MediaImage?> get getMediaImageStream =>
-      _movieImages.stream.asBroadcastStream();
-  MediaImage? get movieImages => _movieImages.value;
+      _movieImagesSubject.stream.asBroadcastStream();
+  MediaImage? get movieImages => _movieImagesSubject.value;
 
-  final BehaviorSubject<RequestState> _movieImagesState =
+  final BehaviorSubject<RequestState> _movieImagesStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get getMovieImagesStateStream =>
-      _movieImagesState.stream.asBroadcastStream();
-  RequestState get movieImagesState => _movieImagesState.value;
+      _movieImagesStateSubject.stream.asBroadcastStream();
+  RequestState get movieImagesState => _movieImagesStateSubject.value;
 
   Future<void> fetchMovieImages(int id) async {
-    _movieImagesState.add(RequestState.loading);
+    _movieImagesStateSubject.add(RequestState.loading);
 
     final Either<Failure, MediaImage> result =
         await getMovieImagesUsecase.execute(id);
     result.fold(
       (Failure failure) {
-        _movieImagesState.add(RequestState.error);
-        message.add(failure.message);
+        _movieImagesStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (MediaImage movieImages) {
-        _movieImagesState.add(RequestState.loaded);
-        _movieImages.add(movieImages);
+        _movieImagesStateSubject.add(RequestState.loaded);
+        _movieImagesSubject.add(movieImages);
       },
     );
   }
 
   @override
   void dispose() {
-    _movieImages.close();
-    _movieImagesState.close();
+    _movieImagesSubject.close();
+    _movieImagesStateSubject.close();
     super.dispose();
   }
 }

@@ -11,38 +11,38 @@ class TvSeasonEpisodesBloc extends BaseBloc {
   TvSeasonEpisodesBloc({required this.getTvSeasonEpisodes});
   final GetTvSeasonEpisodesUsecase getTvSeasonEpisodes;
 
-  final BehaviorSubject<List<TvSeasonEpisode>> _seasonEpisodes =
+  final BehaviorSubject<List<TvSeasonEpisode>> _seasonEpisodesSubject =
       BehaviorSubject<List<TvSeasonEpisode>>.seeded(<TvSeasonEpisode>[]);
   Stream<List<TvSeasonEpisode>> get seasonEpisodes =>
-      _seasonEpisodes.stream.asBroadcastStream();
+      _seasonEpisodesSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _seasonEpisodesState =
+  final BehaviorSubject<RequestState> _seasonEpisodesStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get seasonEpisodesStateStream =>
-      _seasonEpisodesState.stream.asBroadcastStream();
+      _seasonEpisodesStateSubject.stream.asBroadcastStream();
 
   Future<void> fetchTvSeasonEpisodes(int id, int seasonNumber) async {
-    _seasonEpisodesState.add(RequestState.loading);
+    _seasonEpisodesStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<TvSeasonEpisode>> seasonEpisodesResult =
         await getTvSeasonEpisodes.execute(id, seasonNumber);
 
     seasonEpisodesResult.fold(
       (Failure failure) {
-        _seasonEpisodesState.add(RequestState.error);
-        message.add(failure.message);
+        _seasonEpisodesStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (List<TvSeasonEpisode> seasonEpisode) {
-        _seasonEpisodesState.add(RequestState.loaded);
-        _seasonEpisodes.add(seasonEpisode);
+        _seasonEpisodesStateSubject.add(RequestState.loaded);
+        _seasonEpisodesSubject.add(seasonEpisode);
       },
     );
   }
 
   @override
   void dispose() {
-    _seasonEpisodes.close();
-    _seasonEpisodesState.close();
+    _seasonEpisodesSubject.close();
+    _seasonEpisodesStateSubject.close();
     super.dispose();
   }
 }

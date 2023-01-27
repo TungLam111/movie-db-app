@@ -11,38 +11,37 @@ class WatchlistTvBloc extends BaseBloc {
   WatchlistTvBloc({required this.getWatchlistTvsUsecase});
   final GetWatchlistTvsUsecase getWatchlistTvsUsecase;
 
-  final BehaviorSubject<List<Tv>> _watchlistTvs =
+  final BehaviorSubject<List<Tv>> _watchlistTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
-
   Stream<List<Tv>> get watchlistTvsStream =>
-      _watchlistTvs.stream.asBroadcastStream();
+      _watchlistTvsSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _watchlistState =
+  final BehaviorSubject<RequestState> _watchlistStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get watchlistStateStream =>
-      _watchlistState.stream.asBroadcastStream();
+      _watchlistStateSubject.stream.asBroadcastStream();
 
   Future<void> fetchWatchlistTvs() async {
-    _watchlistState.add(RequestState.loading);
+    _watchlistStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Tv>> result =
         await getWatchlistTvsUsecase.execute();
     result.fold(
       (Failure failure) {
-        _watchlistState.add(RequestState.error);
-        message.add(failure.message);
+        _watchlistStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (List<Tv> watchlistTvs) {
-        _watchlistState.add(RequestState.loaded);
-        _watchlistTvs.add(watchlistTvs);
+        _watchlistStateSubject.add(RequestState.loaded);
+        _watchlistTvsSubject.add(watchlistTvs);
       },
     );
   }
 
   @override
   void dispose() {
-    _watchlistState.close();
-    _watchlistTvs.close();
+    _watchlistStateSubject.close();
+    _watchlistTvsSubject.close();
     super.dispose();
   }
 }

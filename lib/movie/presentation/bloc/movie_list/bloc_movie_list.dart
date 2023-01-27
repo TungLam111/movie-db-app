@@ -18,7 +18,9 @@ class BlocMovieList extends BaseBloc {
     required this.getNowPlayingMoviesUsecase,
     required this.getPopularMoviesUsecase,
     required this.getTopRatedMoviesUsecase,
-  });
+  }) {
+    initActionListen();
+  }
 
   final GetNowPlayingMoviesUsecase getNowPlayingMoviesUsecase;
   final GetPopularMoviesUsecase getPopularMoviesUsecase;
@@ -27,13 +29,13 @@ class BlocMovieList extends BaseBloc {
   final StreamController<MovieListAction> actionController =
       StreamController<MovieListAction>();
 
-  MovieListState get initialState => _state.value;
-  Stream<MovieListState> get state =>
-      _state.stream.distinct().asBroadcastStream();
-  final BehaviorSubject<MovieListState> _state =
+  final BehaviorSubject<MovieListState> _stateSubject =
       BehaviorSubject<MovieListState>.seeded(
     MovieListState(),
   );
+  MovieListState get initialState => _stateSubject.value;
+  Stream<MovieListState> get state =>
+      _stateSubject.stream.distinct().asBroadcastStream();
 
   void initActionListen() {
     actionController.stream.listen((MovieListAction event) {
@@ -48,8 +50,8 @@ class BlocMovieList extends BaseBloc {
   }
 
   Future<void> onFetchNowPlayingMovies(MovieListAction event) async {
-    _state.add(
-      _state.value.rebuild(
+    _stateSubject.add(
+      _stateSubject.value.rebuild(
         (MovieListStateBuilder p0) =>
             p0.nowPlayingMoviesState = RequestState.loading,
       ),
@@ -60,17 +62,17 @@ class BlocMovieList extends BaseBloc {
 
     result.fold(
       (Failure failure) {
-        _state.add(
-          _state.value.rebuild(
+        _stateSubject.add(
+          _stateSubject.value.rebuild(
             (MovieListStateBuilder p0) =>
                 p0..nowPlayingMoviesState = RequestState.error,
           ),
         );
-        message.add(failure.message);
+        messageSubject.add(failure.message);
       },
       (List<Movie> moviesData) {
-        _state.add(
-          _state.value.rebuild(
+        _stateSubject.add(
+          _stateSubject.value.rebuild(
             (MovieListStateBuilder p0) => p0
               ..nowPlayingMoviesState = RequestState.loaded
               ..nowPlayingMovies = moviesData,
@@ -81,8 +83,8 @@ class BlocMovieList extends BaseBloc {
   }
 
   Future<void> onFetchPopularMovies(MovieListAction event) async {
-    _state.add(
-      _state.value.rebuild(
+    _stateSubject.add(
+      _stateSubject.value.rebuild(
         (MovieListStateBuilder p0) =>
             p0.popularMoviesState = RequestState.loading,
       ),
@@ -93,17 +95,17 @@ class BlocMovieList extends BaseBloc {
 
     result.fold(
       (Failure failure) {
-        _state.add(
-          _state.value.rebuild(
+        _stateSubject.add(
+          _stateSubject.value.rebuild(
             (MovieListStateBuilder p0) =>
                 p0..popularMoviesState = RequestState.error,
           ),
         );
-        message.add(failure.message);
+        messageSubject.add(failure.message);
       },
       (List<Movie> moviesData) {
-        _state.add(
-          _state.value.rebuild(
+        _stateSubject.add(
+          _stateSubject.value.rebuild(
             (MovieListStateBuilder p0) => p0
               ..popularMoviesState = RequestState.loaded
               ..popularMovies = moviesData,
@@ -114,8 +116,8 @@ class BlocMovieList extends BaseBloc {
   }
 
   Future<void> onFetchTopRatedMovies(MovieListAction event) async {
-    _state.add(
-      _state.value.rebuild(
+    _stateSubject.add(
+      _stateSubject.value.rebuild(
         (MovieListStateBuilder p0) =>
             p0.topRatedMoviesState = RequestState.loading,
       ),
@@ -126,17 +128,17 @@ class BlocMovieList extends BaseBloc {
 
     result.fold(
       (Failure failure) {
-        _state.add(
-          _state.value.rebuild(
+        _stateSubject.add(
+          _stateSubject.value.rebuild(
             (MovieListStateBuilder p0) =>
                 p0..topRatedMoviesState = RequestState.error,
           ),
         );
-        message.add(failure.message);
+        messageSubject.add(failure.message);
       },
       (List<Movie> moviesData) {
-        _state.add(
-          _state.value.rebuild(
+        _stateSubject.add(
+          _stateSubject.value.rebuild(
             (MovieListStateBuilder p0) => p0
               ..topRatedMoviesState = RequestState.loaded
               ..topRatedMovies = moviesData,
@@ -148,7 +150,7 @@ class BlocMovieList extends BaseBloc {
 
   @override
   void dispose() {
-    _state.close();
+    _stateSubject.close();
     actionController.close();
     super.dispose();
   }

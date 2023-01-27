@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/movie/presentation/bloc/watchlist_movie/watchlist_movie_bloc.dart';
 import 'package:mock_bloc_stream/movie/presentation/pages/movie_watchlist_page.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/watchlist_tv_bloc.dart';
 import 'package:mock_bloc_stream/tv/presentation/pages/tv_watchlist_page.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
-import 'package:provider/provider.dart';
 
 class WatchlistPage extends StatefulWidget {
   const WatchlistPage({Key? key}) : super(key: key);
@@ -15,30 +15,42 @@ class WatchlistPage extends StatefulWidget {
 }
 
 class _WatchlistPageState extends State<WatchlistPage> with RouteAware {
+  late WatchlistMovieBloc _movieBloc;
+  late WatchlistTvBloc _tvBloc;
+
   @override
   void initState() {
     super.initState();
-    Future<void>.microtask(
-      () => Provider.of<WatchlistMovieBloc>(context, listen: false)
-          .fetchWatchlistMovies(),
-    );
-    Future<void>.microtask(
-      () => Provider.of<WatchlistTvBloc>(context, listen: false)
-          .fetchWatchlistTvs(),
-    );
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     routeObserver.subscribe(this, ModalRoute.of(context)!);
+    _movieBloc = BlocProvider.of<WatchlistMovieBloc>(context);
+    _tvBloc = BlocProvider.of<WatchlistTvBloc>(context);
+
+    Future<void>.microtask(
+      () => _movieBloc.fetchWatchlistMovies(),
+    );
+    Future<void>.microtask(
+      () => _tvBloc.fetchWatchlistTvs(),
+    );
   }
 
   @override
   void didPopNext() {
-    Provider.of<WatchlistMovieBloc>(context, listen: false)
-        .fetchWatchlistMovies();
-    Provider.of<WatchlistTvBloc>(context, listen: false).fetchWatchlistTvs();
+    _movieBloc.fetchWatchlistMovies();
+    _tvBloc.fetchWatchlistTvs();
+  }
+
+  @override
+  void dispose() {
+    _movieBloc.dispose();
+    _tvBloc.dispose();
+
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -71,11 +83,5 @@ class _WatchlistPageState extends State<WatchlistPage> with RouteAware {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
   }
 }

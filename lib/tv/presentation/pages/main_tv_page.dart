@@ -2,6 +2,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
+import 'package:mock_bloc_stream/core/base_bloc.dart';
+import 'package:mock_bloc_stream/injection/di_locator.dart';
 import 'package:mock_bloc_stream/tv/domain/entities/media_image.dart';
 import 'package:mock_bloc_stream/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/tv_images_bloc.dart';
@@ -11,36 +14,62 @@ import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/urls.dart';
 import 'package:mock_bloc_stream/widgets/shimmer_loading_widget.dart';
-import 'package:provider/provider.dart';
 import '../widgets/horizontal_item_list.dart';
 import '../widgets/minimal_detail.dart';
 import '../widgets/sub_heading.dart';
 import 'popular_tvs_page.dart';
 import 'top_rated_tvs_page.dart';
 
-class MainTvPage extends StatefulWidget {
+class MainTvPage extends StatelessWidget {
   const MainTvPage({Key? key}) : super(key: key);
 
   @override
-  State<MainTvPage> createState() => _MainTvPageState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: <BlocProvider<BaseBloc>>[
+        BlocProvider<TvListBloc>(
+          bloc: locator<TvListBloc>(),
+        ),
+        BlocProvider<TvImagesBloc>(
+          bloc: locator<TvImagesBloc>(),
+        )
+      ],
+      child: const _MainTvPage(),
+    );
+  }
 }
 
-class _MainTvPageState extends State<MainTvPage> {
+class _MainTvPage extends StatefulWidget {
+  const _MainTvPage({Key? key}) : super(key: key);
+
+  @override
+  State<_MainTvPage> createState() => _MainTvPageState();
+}
+
+class _MainTvPageState extends State<_MainTvPage> {
+  late TvListBloc _tvListBloc;
+  late TvImagesBloc _tvImagesBloc;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _tvListBloc = BlocProvider.of<TvListBloc>(context);
+    _tvImagesBloc = BlocProvider.of<TvImagesBloc>(context);
+
     Future<void>.microtask(() {
-      Provider.of<TvListBloc>(context, listen: false)
-          .fetchOnTheAirTvs()
-          .whenComplete(
-            () =>
-                Provider.of<TvImagesBloc>(context, listen: false).fetchTvImages(
-              Provider.of<TvListBloc>(context, listen: false).onTheAirTvs[0].id,
+      _tvListBloc.fetchOnTheAirTvs().whenComplete(
+            () => _tvImagesBloc.fetchTvImages(
+              _tvListBloc.onTheAirTvs[0].id,
             ),
           );
-      Provider.of<TvListBloc>(context, listen: false).fetchPopularTvs();
-      Provider.of<TvListBloc>(context, listen: false).fetchTopRatedTvs();
+      _tvListBloc.fetchPopularTvs();
+      _tvListBloc.fetchTopRatedTvs();
     });
+    super.didChangeDependencies();
   }
 
   @override
@@ -79,14 +108,14 @@ class _MainTvPageState extends State<MainTvPage> {
 
   Widget _buildTheAirTvsWidget() {
     return RequiredStreamBuilder<RequestState>(
-      stream: Provider.of<TvListBloc>(context).onTheAirTvsStateStream,
+      stream: _tvListBloc.onTheAirTvsStateStream,
       builder: (
         BuildContext context,
         AsyncSnapshot<RequestState> snap1,
       ) {
         if (snap1.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Tv>>(
-            stream: Provider.of<TvListBloc>(context).onTheAirTvsStream,
+            stream: _tvListBloc.onTheAirTvsStream,
             builder: (__, AsyncSnapshot<List<Tv>> snap2) {
               if (!snap2.hasData) {
                 return const ShimmerPlayingTvLoadingWidget();
@@ -98,11 +127,8 @@ class _MainTvPageState extends State<MainTvPage> {
                     height: 575.0,
                     viewportFraction: 1.0,
                     onPageChanged: (int index, _) {
-                      Provider.of<TvImagesBloc>(
-                        context,
-                        listen: false,
-                      ).fetchTvImages(
-                        Provider.of<TvListBloc>(context).onTheAirTvs[index].id,
+                      _tvImagesBloc.fetchTvImages(
+                        _tvListBloc.onTheAirTvs[index].id,
                       );
                     },
                   ),
@@ -192,9 +218,7 @@ class _MainTvPageState extends State<MainTvPage> {
                                     ),
                                     //TvImagesNotifier
                                     child: RequiredStreamBuilder<RequestState>(
-                                      stream: Provider.of<TvImagesBloc>(
-                                        context,
-                                      ).tvImagesStateStream,
+                                      stream: _tvImagesBloc.tvImagesStateStream,
                                       builder: (
                                         BuildContext context,
                                         AsyncSnapshot<RequestState> imageSnap1,
@@ -203,9 +227,8 @@ class _MainTvPageState extends State<MainTvPage> {
                                             RequestState.loaded) {
                                           return RequiredStreamBuilder<
                                               MediaImage?>(
-                                            stream: Provider.of<TvImagesBloc>(
-                                              context,
-                                            ).tvImagesStream,
+                                            stream:
+                                                _tvImagesBloc.tvImagesStream,
                                             builder: (
                                               __,
                                               AsyncSnapshot<MediaImage?>
@@ -266,14 +289,14 @@ class _MainTvPageState extends State<MainTvPage> {
 
   Widget _buildPopularTvsWidget() {
     return RequiredStreamBuilder<RequestState>(
-      stream: Provider.of<TvListBloc>(context).popularTvsStateStream,
+      stream: _tvListBloc.popularTvsStateStream,
       builder: (
         _,
         AsyncSnapshot<RequestState> data,
       ) {
         if (data.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Tv>>(
-            stream: Provider.of<TvListBloc>(context).popularTvsStream,
+            stream: _tvListBloc.popularTvsStream,
             builder: (
               __,
               AsyncSnapshot<List<Tv>> snap2,
@@ -300,11 +323,11 @@ class _MainTvPageState extends State<MainTvPage> {
 
   Widget _buildTopRatedTvsWidget() {
     return RequiredStreamBuilder<RequestState>(
-      stream: Provider.of<TvListBloc>(context).topRatedTvsStateStream,
+      stream: _tvListBloc.topRatedTvsStateStream,
       builder: (BuildContext context, AsyncSnapshot<RequestState> snap1) {
         if (snap1.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Tv>>(
-            stream: Provider.of<TvListBloc>(context).topRatedTvsStream,
+            stream: _tvListBloc.topRatedTvsStream,
             builder: (_, AsyncSnapshot<List<Tv>> snap2) {
               if (!snap2.hasData) {
                 return const ShimmerLoadingWidget();

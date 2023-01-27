@@ -18,11 +18,8 @@ class ItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          MovieDetailPage.routeName,
-          arguments: movie.id,
-        );
+        Navigator.of(context)
+            .pushNamed(MovieDetailPage.routeName, arguments: movie.id);
       },
       child: Container(
         padding: const EdgeInsets.all(8.0),

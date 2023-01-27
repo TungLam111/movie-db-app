@@ -3,28 +3,40 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mock_bloc_stream/auth/presentation/bloc/auth_bloc.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/utils/color.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 import 'package:mock_bloc_stream/widgets/custom_button.dart';
 import 'package:mock_bloc_stream/widgets/custom_input_widget.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
-
+  static const String routeName = '/login';
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   late StreamSubscription<RequestState> _loginStateSubscription;
+  late AuthBloc bloc;
   @override
   void initState() {
     super.initState();
-    _loginStateSubscription = Provider.of<AuthBloc>(context, listen: false)
-        .loginStateStream
-        .listen((RequestState event) {
+  }
+
+  @override
+  void dispose() {
+    _loginStateSubscription.cancel();
+    bloc.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    bloc = BlocProvider.of<AuthBloc>(context);
+    _loginStateSubscription =
+        bloc.loginStateStream.listen((RequestState event) {
       if (event == RequestState.loading) {
         EasyLoading.show();
       } else if (event == RequestState.loaded) {
@@ -35,12 +47,7 @@ class _LoginPageState extends State<LoginPage> {
         EasyLoading.dismiss();
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _loginStateSubscription.cancel();
-    super.dispose();
+    super.didChangeDependencies();
   }
 
   @override
@@ -113,8 +120,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildEmail() {
     return CustomInputWidget(
-      controller:
-          Provider.of<AuthBloc>(context, listen: false).usernameController,
+      controller: bloc.usernameController,
       labelText: 'Username',
       labelStyle: StylesConstant.ts13w400.copyWith(
         color: ColorConstant.kFF9CA5B4,
@@ -124,8 +130,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildPassword() {
     return CustomInputWidget(
-      controller:
-          Provider.of<AuthBloc>(context, listen: false).passwordController,
+      controller: bloc.passwordController,
       labelText: 'Password',
       labelStyle: StylesConstant.ts13w400.copyWith(
         color: ColorConstant.kFF9CA5B4,
@@ -199,6 +204,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void onLogin() async {
-    Provider.of<AuthBloc>(context, listen: false).createSessionWithLogin();
+    bloc.createSessionWithLogin();
   }
 }

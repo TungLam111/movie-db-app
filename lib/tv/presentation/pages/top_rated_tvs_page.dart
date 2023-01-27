@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/top_rated_tvs_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
-import 'package:provider/provider.dart';
 import '../widgets/item_card_list.dart';
 
 class TopRatedTvsPage extends StatefulWidget {
@@ -14,13 +14,19 @@ class TopRatedTvsPage extends StatefulWidget {
 }
 
 class _TopRatedTvsPageState extends State<TopRatedTvsPage> {
+  late TopRatedTvsBloc _bloc;
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _bloc = BlocProvider.of<TopRatedTvsBloc>(context);
     Future<void>.microtask(
-      () => Provider.of<TopRatedTvsBloc>(context, listen: false)
-          .fetchTopRatedTvs(),
+      () => _bloc.fetchTopRatedTvs(),
     );
+    super.didChangeDependencies();
   }
 
   @override
@@ -35,8 +41,8 @@ class _TopRatedTvsPageState extends State<TopRatedTvsPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: CustomizedStreamBuilder<Tv>(
-          streamLoadState: Provider.of<TopRatedTvsBloc>(context).state,
-          streamLoadData: Provider.of<TopRatedTvsBloc>(context).tvs,
+          streamLoadState: _bloc.state,
+          streamLoadData: _bloc.tvs,
           loadingWidget: const Center(
             child: CircularProgressIndicator(),
           ),
@@ -47,7 +53,7 @@ class _TopRatedTvsPageState extends State<TopRatedTvsPage> {
           },
           otherWidget: Center(
             key: const Key('error_message'),
-            child: Text(Provider.of<TopRatedTvsBloc>(context).getMessage),
+            child: Text(_bloc.getMessage),
           ),
         ),
       ),

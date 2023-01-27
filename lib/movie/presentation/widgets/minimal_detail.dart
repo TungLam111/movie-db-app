@@ -139,11 +139,8 @@ class MinimalDetail extends StatelessWidget {
             child: TextButton(
               key: Key(keyValue ?? '-'),
               onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  MovieDetailPage.routeName,
-                  arguments: movie.id,
-                );
+                Navigator.of(context)
+                    .pushNamed(MovieDetailPage.routeName, arguments: movie.id);
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,

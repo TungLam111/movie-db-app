@@ -11,36 +11,36 @@ class TvImagesBloc extends BaseBloc {
   TvImagesBloc({required this.getTvImagesUsecase});
   final GetTvImagesUsecase getTvImagesUsecase;
 
-  final BehaviorSubject<MediaImage?> _tvImages =
+  final BehaviorSubject<MediaImage?> _tvImagesSubject =
       BehaviorSubject<MediaImage?>.seeded(null);
   Stream<MediaImage?> get tvImagesStream =>
-      _tvImages.stream.asBroadcastStream();
+      _tvImagesSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _tvImagesState =
+  final BehaviorSubject<RequestState> _tvImagesStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
-  Stream<RequestState> get tvImagesStateStream => _tvImagesState.stream;
+  Stream<RequestState> get tvImagesStateStream => _tvImagesStateSubject.stream;
 
   Future<void> fetchTvImages(int id) async {
-    _tvImagesState.add(RequestState.loading);
+    _tvImagesStateSubject.add(RequestState.loading);
 
     final Either<Failure, MediaImage> result =
         await getTvImagesUsecase.execute(id);
     result.fold(
       (Failure failure) {
-        _tvImagesState.add(RequestState.error);
-        message.add(failure.message);
+        _tvImagesStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (MediaImage tvImages) {
-        _tvImagesState.add(RequestState.loaded);
-        _tvImages.add(tvImages);
+        _tvImagesStateSubject.add(RequestState.loaded);
+        _tvImagesSubject.add(tvImages);
       },
     );
   }
 
   @override
   void dispose() {
-    _tvImages.close();
-    _tvImagesState.close();
+    _tvImagesSubject.close();
+    _tvImagesStateSubject.close();
     super.dispose();
   }
 }

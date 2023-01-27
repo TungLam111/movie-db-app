@@ -1,10 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/movie/domain/entities/movie.dart';
 import 'package:mock_bloc_stream/movie/presentation/bloc/top_rated_movies/top_rated_movies_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
-import 'package:provider/provider.dart';
 
 import '../widgets/item_card_list.dart';
 
@@ -17,13 +17,18 @@ class TopRatedMoviesPage extends StatefulWidget {
 }
 
 class _TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
+  late TopRatedMoviesBloc _bloc;
+
   @override
   void initState() {
     super.initState();
-    Future<void>.microtask(
-      () => Provider.of<TopRatedMoviesBloc>(context, listen: false)
-          .fetchTopRatedMovies(),
-    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    _bloc = BlocProvider.of<TopRatedMoviesBloc>(context);
+    _bloc.fetchTopRatedMovies();
+    super.didChangeDependencies();
   }
 
   @override
@@ -38,7 +43,7 @@ class _TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: RequiredStreamBuilder<RequestState>(
-          stream: Provider.of<TopRatedMoviesBloc>(context).stateStream,
+          stream: _bloc.stateStream,
           builder: (
             BuildContext context,
             AsyncSnapshot<RequestState> snap1,
@@ -49,7 +54,7 @@ class _TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
               );
             } else if (snap1.data == RequestState.loaded) {
               return RequiredStreamBuilder<List<Movie>>(
-                stream: Provider.of<TopRatedMoviesBloc>(context).moviesStream,
+                stream: _bloc.moviesStream,
                 builder: (__, AsyncSnapshot<List<Movie>> snap2) {
                   if (!snap2.hasData) {
                     return const Center(
@@ -75,8 +80,7 @@ class _TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
             } else {
               return Center(
                 key: const Key('error_message'),
-                child:
-                    Text(Provider.of<TopRatedMoviesBloc>(context).getMessage),
+                child: Text(_bloc.getMessage),
               );
             }
           },

@@ -1,10 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/movie/domain/entities/movie.dart';
 import 'package:mock_bloc_stream/movie/presentation/bloc/popular_movies/popular_movies_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
-import 'package:provider/provider.dart';
 
 import 'package:mock_bloc_stream/movie/presentation/widgets/item_card_list.dart';
 
@@ -17,13 +17,18 @@ class PopularMoviesPage extends StatefulWidget {
 }
 
 class _PopularMoviesPageState extends State<PopularMoviesPage> {
+  late PopularMoviesBloc _bloc;
+
   @override
   void initState() {
     super.initState();
-    Future<void>.microtask(
-      () => Provider.of<PopularMoviesBloc>(context, listen: false)
-          .fetchPopularMovies(),
-    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    _bloc = BlocProvider.of<PopularMoviesBloc>(context);
+    _bloc.fetchPopularMovies();
+    super.didChangeDependencies();
   }
 
   @override
@@ -38,8 +43,7 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: RequiredStreamBuilder<RequestState>(
-          stream: Provider.of<PopularMoviesBloc>(context)
-              .getWatchlistMovieStateStream,
+          stream: _bloc.getWatchlistMovieStateStream,
           builder: (
             BuildContext context,
             AsyncSnapshot<RequestState> asyncSnapshot,
@@ -50,7 +54,7 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
               );
             } else if (asyncSnapshot.data == RequestState.loaded) {
               return RequiredStreamBuilder<List<Movie>>(
-                stream: Provider.of<PopularMoviesBloc>(context).getMoviesStream,
+                stream: _bloc.getMoviesStream,
                 builder: (__, AsyncSnapshot<List<Movie>> asyncSnapshot2) {
                   if (!asyncSnapshot2.hasData) {
                     return const Center(
@@ -77,7 +81,7 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
             return Center(
               key: const Key('error_message'),
               child: Text(
-                Provider.of<PopularMoviesBloc>(context).currentMessage,
+                _bloc.currentMessage,
               ),
             );
           },

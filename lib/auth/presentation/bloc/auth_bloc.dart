@@ -21,12 +21,10 @@ class AuthBloc extends BaseBloc {
   final LogoutUsecase logoutUsecase;
   final LoginUsecase loginUsecase;
 
-  final BehaviorSubject<RequestState> _loginState =
+  final BehaviorSubject<RequestState> _loginStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get loginStateStream =>
-      _loginState.stream.asBroadcastStream();
-
-  get getStateSubject => _loginState;
+      _loginStateSubject.stream.asBroadcastStream();
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -44,13 +42,13 @@ class AuthBloc extends BaseBloc {
   Future<void> getToken() async {}
 
   Future<void> createSessionWithLogin() async {
-    _loginState.add(RequestState.loading);
+    _loginStateSubject.add(RequestState.loading);
     final Either<Failure, RequestTokenResponse> tokenResult =
         await loginUsecase.createRequestToken();
     tokenResult.fold(
       (Failure failure) {
-        _loginState.add(RequestState.error);
-        message.add('Can not create request token');
+        _loginStateSubject.add(RequestState.error);
+        messageSubject.add('Can not create request token');
         return Future<void>.value();
       },
       (RequestTokenResponse data) async {
@@ -59,7 +57,6 @@ class AuthBloc extends BaseBloc {
             .setUserToken(data.requestToken!);
       },
     );
-
 
     final Either<Failure, SessionWithLoginResponse> result =
         await loginUsecase.createSessionWithLogin(
@@ -70,18 +67,18 @@ class AuthBloc extends BaseBloc {
 
     result.fold(
       (Failure failure) {
-        _loginState.add(RequestState.error);
-        message.add(failure.message);
+        _loginStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (SessionWithLoginResponse data) {
-        _loginState.add(RequestState.loaded);
+        _loginStateSubject.add(RequestState.loaded);
       },
     );
   }
 
   @override
   void dispose() {
-    _loginState.close();
+    _loginStateSubject.close();
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();

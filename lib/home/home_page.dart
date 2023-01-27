@@ -1,31 +1,16 @@
-// import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/about/about_page.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
+import 'package:mock_bloc_stream/core/app_bloc.dart';
 import 'package:mock_bloc_stream/home/bloc/home_bloc.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/movie_detail/movie_detail_bloc.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/movie_images/movie_images_bloc.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/movie_list/movie_list_bloc.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/popular_movies/popular_movies_bloc.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/top_rated_movies/top_rated_movies_bloc.dart';
-import 'package:mock_bloc_stream/movie/presentation/bloc/watchlist_movie/watchlist_movie_bloc.dart';
 import 'package:mock_bloc_stream/movie/presentation/pages/main_movie_page.dart';
-import 'package:mock_bloc_stream/search/presentation/bloc/search_bloc.dart';
 import 'package:mock_bloc_stream/search/presentation/pages/movie_search_page.dart';
 import 'package:mock_bloc_stream/search/presentation/pages/tv_search_page.dart';
-import 'package:mock_bloc_stream/tv/presentation/bloc/popular_tvs_bloc.dart';
-import 'package:mock_bloc_stream/tv/presentation/bloc/top_rated_tvs_bloc.dart';
-import 'package:mock_bloc_stream/tv/presentation/bloc/tv_detail_bloc.dart';
-import 'package:mock_bloc_stream/tv/presentation/bloc/tv_images_bloc.dart';
-import 'package:mock_bloc_stream/tv/presentation/bloc/tv_list_bloc.dart';
-import 'package:mock_bloc_stream/tv/presentation/bloc/tv_season_episodes_bloc.dart';
-import 'package:mock_bloc_stream/tv/presentation/bloc/watchlist_tv_bloc.dart';
 import 'package:mock_bloc_stream/tv/presentation/pages/main_tv_page.dart';
 import 'package:mock_bloc_stream/utils/color.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
-import 'package:provider/provider.dart';
 import 'watchlist_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -77,23 +62,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    _homeBloc = BlocProvider.of<HomeBloc>(context);
+    super.didChangeDependencies();
+  }
+
   void disposeStream() {
-    Provider.of<HomeBloc>(context).dispose();
-    Provider.of<MovieListBloc>(context).dispose();
-    Provider.of<PopularMoviesBloc>(context).dispose();
-    Provider.of<TopRatedMoviesBloc>(context).dispose();
-    Provider.of<MovieDetailBloc>(context).dispose();
-    Provider.of<MovieImagesBloc>(context).dispose();
-    Provider.of<WatchlistMovieBloc>(context).dispose();
-    Provider.of<TvListBloc>(context).dispose();
-    Provider.of<PopularTvsBloc>(context).dispose();
-    Provider.of<TopRatedTvsBloc>(context).dispose();
-    Provider.of<TvDetailBloc>(context).dispose();
-    Provider.of<TvSeasonEpisodesBloc>(context).dispose();
-    Provider.of<TvImagesBloc>(context).dispose();
-    Provider.of<WatchlistTvBloc>(context).dispose();
-    Provider.of<MovieSearchBloc>(context);
-    Provider.of<TvSearchBloc>(context);
+    BlocProvider.of<AppBloc>(context).dispose();
+    _homeBloc.dispose();
   }
 
   void toggle() => _drawerAnimationController.isDismissed
@@ -110,7 +87,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _homeBloc = Provider.of<HomeBloc>(context, listen: false);
     return Material(
       color: ColorConstant.kSpaceGrey,
       child: AnimatedBuilder(
@@ -190,10 +166,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ListTile(
                                 key: const Key('movieListTile'),
                                 onTap: () {
-                                  Provider.of<HomeBloc>(
-                                    context,
-                                    listen: false,
-                                  ).setState(GeneralContentType.movie);
+                                  _homeBloc.setState(GeneralContentType.movie);
                                   toggle();
                                 },
                                 leading: const Icon(Icons.movie),
@@ -212,10 +185,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ListTile(
                                 key: const Key('tvListTile'),
                                 onTap: () {
-                                  Provider.of<HomeBloc>(
-                                    context,
-                                    listen: false,
-                                  ).setState(GeneralContentType.tv);
+                                  _homeBloc.setState(GeneralContentType.tv);
                                   toggle();
                                 },
                                 leading: const Icon(Icons.tv),

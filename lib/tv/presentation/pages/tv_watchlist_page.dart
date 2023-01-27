@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/watchlist_tv_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
-import 'package:provider/provider.dart';
 
 import '../widgets/item_card_list.dart';
 
@@ -13,7 +13,7 @@ class TvWatchlist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RequiredStreamBuilder<RequestState>(
-      stream: Provider.of<WatchlistTvBloc>(context).watchlistStateStream,
+      stream: BlocProvider.of<WatchlistTvBloc>(context).watchlistStateStream,
       builder: (
         BuildContext context,
         AsyncSnapshot<RequestState> snapshot,
@@ -22,7 +22,8 @@ class TvWatchlist extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Tv>>(
-            stream: Provider.of<WatchlistTvBloc>(context).watchlistTvsStream,
+            stream:
+                BlocProvider.of<WatchlistTvBloc>(context).watchlistTvsStream,
             builder: (__, AsyncSnapshot<List<Tv>> snapshot2) {
               if (!snapshot2.hasData) {
                 return const Center(
@@ -45,7 +46,9 @@ class TvWatchlist extends StatelessWidget {
         }
         return Center(
           key: const Key('error_message'),
-          child: Text(Provider.of<WatchlistTvBloc>(context).message.value),
+          child: Text(
+            BlocProvider.of<WatchlistTvBloc>(context).messageSubject.value,
+          ),
         );
       },
     );

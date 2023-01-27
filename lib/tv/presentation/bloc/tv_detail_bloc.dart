@@ -29,38 +29,39 @@ class TvDetailBloc extends BaseBloc {
   final SaveWatchlistTvUsecase saveWatchlistUsecase;
   final RemoveWatchlistTvUsecase removeWatchlistUsecase;
 
-  final BehaviorSubject<TvDetail?> _tv =
+  final BehaviorSubject<TvDetail?> _tvSubject =
       BehaviorSubject<TvDetail?>.seeded(null);
-  Stream<TvDetail?> get tv => _tv.stream.asBroadcastStream();
+  Stream<TvDetail?> get tv => _tvSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _tvState =
+  final BehaviorSubject<RequestState> _tvStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
-  Stream<RequestState> get tvStateStream => _tvState.stream.asBroadcastStream();
+  Stream<RequestState> get tvStateStream =>
+      _tvStateSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<List<Tv>> _recommendations =
+  final BehaviorSubject<List<Tv>> _recommendationsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
   Stream<List<Tv>> get recommendationsStream =>
-      _recommendations.stream.asBroadcastStream();
+      _recommendationsSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _recommendationsState =
+  final BehaviorSubject<RequestState> _recommendationsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get recommendationsStateStream =>
-      _recommendationsState.stream.asBroadcastStream();
+      _recommendationsStateSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<bool> _isAddedToWatchlist =
+  final BehaviorSubject<bool> _isAddedToWatchlistSubject =
       BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isAddedToWatchlistStream =>
-      _isAddedToWatchlist.stream.asBroadcastStream();
-  bool get isAddedToWatchlist => _isAddedToWatchlist.value;
+      _isAddedToWatchlistSubject.stream.asBroadcastStream();
+  bool get isAddedToWatchlist => _isAddedToWatchlistSubject.value;
 
-  final BehaviorSubject<String> _watchlistMessage =
+  final BehaviorSubject<String> _watchlistMessageSubject =
       BehaviorSubject<String>.seeded('');
   Stream<String> get watchlistMessageStream =>
-      _watchlistMessage.stream.asBroadcastStream();
-  String get watchlistMessage => _watchlistMessage.value;
+      _watchlistMessageSubject.stream.asBroadcastStream();
+  String get watchlistMessage => _watchlistMessageSubject.value;
 
   Future<void> fetchTvDetail(int id) async {
-    _tvState.add(RequestState.loading);
+    _tvStateSubject.add(RequestState.loading);
 
     final Either<Failure, TvDetail> detailResult =
         await getTvDetailUsecase.execute(id);
@@ -69,21 +70,21 @@ class TvDetailBloc extends BaseBloc {
 
     detailResult.fold(
       (Failure failure) {
-        _tvState.add(RequestState.error);
-        message.add(failure.message);
+        _tvStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (TvDetail tv) {
-        _recommendationsState.add(RequestState.loading);
-        _tvState.add(RequestState.loaded);
-        _tv.add(tv);
+        _recommendationsStateSubject.add(RequestState.loading);
+        _tvStateSubject.add(RequestState.loaded);
+        _tvSubject.add(tv);
         recommendationsResult.fold(
           (Failure failure) {
-            _recommendationsState.add(RequestState.error);
-            message.add(failure.message);
+            _recommendationsStateSubject.add(RequestState.error);
+            messageSubject.add(failure.message);
           },
           (List<Tv> tvs) {
-            _recommendationsState.add(RequestState.loaded);
-            _recommendations.add(tvs);
+            _recommendationsStateSubject.add(RequestState.loaded);
+            _recommendationsSubject.add(tvs);
           },
         );
       },
@@ -96,10 +97,10 @@ class TvDetailBloc extends BaseBloc {
 
     await result.fold(
       (Failure failure) async {
-        _watchlistMessage.add(failure.message);
+        _watchlistMessageSubject.add(failure.message);
       },
       (String successMessage) async {
-        _watchlistMessage.add(successMessage);
+        _watchlistMessageSubject.add(successMessage);
       },
     );
 
@@ -112,10 +113,10 @@ class TvDetailBloc extends BaseBloc {
 
     await result.fold(
       (Failure failure) async {
-        _watchlistMessage.add(failure.message);
+        _watchlistMessageSubject.add(failure.message);
       },
       (String successMessage) async {
-        _watchlistMessage.add(successMessage);
+        _watchlistMessageSubject.add(successMessage);
       },
     );
 
@@ -124,17 +125,17 @@ class TvDetailBloc extends BaseBloc {
 
   Future<void> loadWatchlistStatus(int id) async {
     final bool result = await getWatchListStatusUsecase.execute(id);
-    _isAddedToWatchlist.add(result);
+    _isAddedToWatchlistSubject.add(result);
   }
 
   @override
   void dispose() {
-    _tv.close();
-    _tvState.close();
-    _recommendations.close();
-    _recommendationsState.close();
-    _isAddedToWatchlist.close();
-    _watchlistMessage.close();
+    _tvSubject.close();
+    _tvStateSubject.close();
+    _recommendationsSubject.close();
+    _recommendationsStateSubject.close();
+    _isAddedToWatchlistSubject.close();
+    _watchlistMessageSubject.close();
     super.dispose();
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/movie/domain/entities/movie.dart';
 import 'package:mock_bloc_stream/movie/presentation/widgets/item_card_list.dart';
+import 'package:mock_bloc_stream/utils/common_util.dart';
 import '../bloc/search_bloc.dart';
 
 class MovieSearchPage extends StatelessWidget {
@@ -22,7 +23,8 @@ class MovieSearchPage extends StatelessWidget {
             TextField(
               key: const Key('enterMovieQuery'),
               onChanged: (String query) {
-                context.read<MovieSearchBloc>().add(OnQueryChanged(query));
+                BlocProvider.of<MovieSearchBloc>(context)
+                    .add(OnQueryChanged(query));
               },
               decoration: InputDecoration(
                 hintText: 'Search movies',
@@ -41,9 +43,17 @@ class MovieSearchPage extends StatelessWidget {
               textInputAction: TextInputAction.search,
               cursorColor: Colors.white,
             ),
-            BlocBuilder<MovieSearchBloc, SearchState>(
-              builder: (BuildContext context, SearchState state) {
-                if (state is MovieSearchHasData) {
+            RequiredStreamBuilder<SearchState>(
+              stream: BlocProvider.of<MovieSearchBloc>(context).state,
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<SearchState> snap1,
+              ) {
+                if (!snap1.hasData) {
+                  return const SizedBox();
+                }
+
+                if (snap1.data is MovieSearchHasData) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
                     child: Text(
@@ -54,19 +64,28 @@ class MovieSearchPage extends StatelessWidget {
                       ),
                     ),
                   );
-                } else {
-                  return const SizedBox();
                 }
+
+                return const SizedBox();
               },
             ),
-            BlocBuilder<MovieSearchBloc, SearchState>(
-              builder: (BuildContext context, SearchState state) {
-                if (state is SearchLoading) {
+            RequiredStreamBuilder<SearchState>(
+              stream: BlocProvider.of<MovieSearchBloc>(context).state,
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<SearchState> snap1,
+              ) {
+                if (!snap1.hasData) {
+                  return const SizedBox();
+                }
+
+                if (snap1.data is SearchLoading) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (state is MovieSearchHasData) {
-                  final List<Movie> result = state.result;
+                } else if (snap1.data is MovieSearchHasData) {
+                  final List<Movie> result =
+                      (snap1.data as MovieSearchHasData).result;
                   return Expanded(
                     child: ListView.builder(
                       itemCount: result.length,
@@ -79,10 +98,10 @@ class MovieSearchPage extends StatelessWidget {
                       },
                     ),
                   );
-                } else if (state is SearchError) {
+                } else if (snap1.data is SearchError) {
                   return Expanded(
                     child: Center(
-                      child: Text(state.message),
+                      child: Text((snap1.data as SearchError).message),
                     ),
                   );
                 } else {

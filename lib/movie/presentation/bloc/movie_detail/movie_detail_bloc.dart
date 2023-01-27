@@ -28,41 +28,41 @@ class MovieDetailBloc extends BaseBloc {
   final SaveWatchlistMovieUsecase saveWatchlist;
   final RemoveWatchlistMovieUsecase removeWatchlist;
 
-  final BehaviorSubject<MovieDetail?> _movie =
+  final BehaviorSubject<MovieDetail?> _movieSubject =
       BehaviorSubject<MovieDetail?>.seeded(null);
   Stream<MovieDetail?> get getMovieDetailStream =>
-      _movie.stream.asBroadcastStream();
+      _movieSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<RequestState> _movieState =
+  final BehaviorSubject<RequestState> _movieStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get movieStateStream =>
-      _movieState.stream.asBroadcastStream();
+      _movieStateSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<List<Movie>> _recommendations =
+  final BehaviorSubject<List<Movie>> _recommendationsSubjectSubject =
       BehaviorSubject<List<Movie>>.seeded(<Movie>[]);
   Stream<List<Movie>> get recommendationStream =>
-      _recommendations.stream.asBroadcastStream();
-  List<Movie> get recommendationsValue => _recommendations.value;
+      _recommendationsSubjectSubject.stream.asBroadcastStream();
+  List<Movie> get recommendationsValue => _recommendationsSubjectSubject.value;
 
-  final BehaviorSubject<RequestState> _recommendationsState =
+  final BehaviorSubject<RequestState> _recommendationsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
   Stream<RequestState> get recommendationsStateStream =>
-      _recommendationsState.stream.asBroadcastStream();
+      _recommendationsStateSubject.stream.asBroadcastStream();
 
-  final BehaviorSubject<bool> _isAddedToWatchlist =
+  final BehaviorSubject<bool> _isAddedToWatchlistSubject =
       BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isAddedToWatchlistStream =>
-      _isAddedToWatchlist.stream.asBroadcastStream();
-  bool get isAddedToWatchlistValue => _isAddedToWatchlist.value;
+      _isAddedToWatchlistSubject.stream.asBroadcastStream();
+  bool get isAddedToWatchlistValue => _isAddedToWatchlistSubject.value;
 
-  final BehaviorSubject<String> _watchlistMessage =
+  final BehaviorSubject<String> _watchlistMessageSubject =
       BehaviorSubject<String>.seeded('');
   Stream<String> get watchlistMessageStream =>
-      _watchlistMessage.stream.asBroadcastStream();
-  String get watchlistMessageValue => _watchlistMessage.value;
+      _watchlistMessageSubject.stream.asBroadcastStream();
+  String get watchlistMessageValue => _watchlistMessageSubject.value;
 
   Future<void> fetchMovieDetail(int id) async {
-    _movieState.add(RequestState.loading);
+    _movieStateSubject.add(RequestState.loading);
 
     final Either<Failure, MovieDetail> detailResult =
         await getMovieDetail.execute(id);
@@ -71,24 +71,24 @@ class MovieDetailBloc extends BaseBloc {
 
     detailResult.fold(
       (Failure failure) {
-        _movieState.add(RequestState.error);
-        message.add(failure.message);
+        _movieStateSubject.add(RequestState.error);
+        messageSubject.add(failure.message);
       },
       (MovieDetail movie) {
-        _recommendationsState.add(RequestState.loading);
-        _movie.add(movie);
+        _recommendationsStateSubject.add(RequestState.loading);
+        _movieSubject.add(movie);
 
         recommendationResult.fold(
           (Failure failure) {
-            _recommendationsState.add(RequestState.error);
-            message.add(failure.message);
+            _recommendationsStateSubject.add(RequestState.error);
+            messageSubject.add(failure.message);
           },
           (List<Movie> movies) {
-            _recommendationsState.add(RequestState.loaded);
-            _recommendations.add(movies);
+            _recommendationsStateSubject.add(RequestState.loaded);
+            _recommendationsSubjectSubject.add(movies);
           },
         );
-        _movieState.add(RequestState.loaded);
+        _movieStateSubject.add(RequestState.loaded);
       },
     );
   }
@@ -98,10 +98,10 @@ class MovieDetailBloc extends BaseBloc {
 
     await result.fold(
       (Failure failure) async {
-        _watchlistMessage.add(failure.message);
+        _watchlistMessageSubject.add(failure.message);
       },
       (String successMessage) async {
-        _watchlistMessage.add(successMessage);
+        _watchlistMessageSubject.add(successMessage);
       },
     );
 
@@ -113,10 +113,10 @@ class MovieDetailBloc extends BaseBloc {
 
     await result.fold(
       (Failure failure) async {
-        _watchlistMessage.add(failure.message);
+        _watchlistMessageSubject.add(failure.message);
       },
       (String successMessage) async {
-        _watchlistMessage.add(successMessage);
+        _watchlistMessageSubject.add(successMessage);
       },
     );
 
@@ -125,17 +125,17 @@ class MovieDetailBloc extends BaseBloc {
 
   Future<void> loadWatchlistStatus(int id) async {
     final bool result = await getWatchListStatus.execute(id);
-    _isAddedToWatchlist.add(result);
+    _isAddedToWatchlistSubject.add(result);
   }
 
   @override
   void dispose() {
-    _movie.close();
-    _movieState.close();
-    _recommendations.close();
-    _recommendationsState.close();
-    _isAddedToWatchlist.close();
-    _watchlistMessage.close();
+    _movieSubject.close();
+    _movieStateSubject.close();
+    _recommendationsSubjectSubject.close();
+    _recommendationsStateSubject.close();
+    _isAddedToWatchlistSubject.close();
+    _watchlistMessageSubject.close();
     super.dispose();
   }
 }

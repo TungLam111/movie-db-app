@@ -44,13 +44,13 @@ class MovieListBloc extends BaseBloc {
     final BehaviorSubject<List<Movie>> topRatedMoviesSubject =
         BehaviorSubject<List<Movie>>.seeded(<Movie>[]);
 
-    final BehaviorSubject<RequestState> nowPlayingState =
+    final BehaviorSubject<RequestState> nowPlayingStateSubject =
         BehaviorSubject<RequestState>.seeded(RequestState.empty);
 
-    final BehaviorSubject<RequestState> popularState =
+    final BehaviorSubject<RequestState> popularStateSubject =
         BehaviorSubject<RequestState>.seeded(RequestState.empty);
 
-    final BehaviorSubject<RequestState> topRatedState =
+    final BehaviorSubject<RequestState> topRatedStateSubject =
         BehaviorSubject<RequestState>.seeded(RequestState.empty);
 
     getCurrentNowPlaying() => nowPlayingMoviesSubject.value;
@@ -62,23 +62,25 @@ class MovieListBloc extends BaseBloc {
       addNowPlayingMovies: nowPlayingMoviesSubject.add,
       addPopularMovies: popularMoviesSubject.add,
       addTopRatedMovies: topRatedMoviesSubject.add,
-      nowPlayingMoviesStream: nowPlayingMoviesSubject.stream,
-      popularMoviesStream: popularMoviesSubject.stream,
-      topRatedMoviesStream: topRatedMoviesSubject.stream,
+      nowPlayingMoviesStream:
+          nowPlayingMoviesSubject.stream.asBroadcastStream(),
+      popularMoviesStream: popularMoviesSubject.stream.asBroadcastStream(),
+      topRatedMoviesStream: topRatedMoviesSubject.stream.asBroadcastStream(),
       nowPlayingMovies: getCurrentNowPlaying,
-      addNowPlayingState: nowPlayingState.add,
-      addPopularMoviesState: popularState.add,
-      addTopRatedMoviesState: topRatedState.add,
-      nowPlayingStateStream: nowPlayingState.stream,
-      popularMoviesStateStream: popularState.stream,
-      topRatedMoviesStateStream: topRatedState.stream,
+      addNowPlayingState: nowPlayingStateSubject.add,
+      addPopularMoviesState: popularStateSubject.add,
+      addTopRatedMoviesState: topRatedStateSubject.add,
+      nowPlayingStateStream: nowPlayingStateSubject.stream.asBroadcastStream(),
+      popularMoviesStateStream: popularStateSubject.stream.asBroadcastStream(),
+      topRatedMoviesStateStream:
+          topRatedStateSubject.stream.asBroadcastStream(),
       whatToDispose: () {
         nowPlayingMoviesSubject.close();
         popularMoviesSubject.close();
         topRatedMoviesSubject.close();
-        nowPlayingState.close();
-        popularState.close();
-        topRatedState.close();
+        nowPlayingStateSubject.close();
+        popularStateSubject.close();
+        topRatedStateSubject.close();
       },
     );
   }
@@ -116,7 +118,7 @@ class MovieListBloc extends BaseBloc {
     result.fold(
       (Failure failure) {
         addNowPlayingState(RequestState.error);
-        message.add(failure.message);
+        messageSubject.add(failure.message);
       },
       (List<Movie> moviesData) {
         addNowPlayingState(RequestState.loaded);
@@ -133,7 +135,7 @@ class MovieListBloc extends BaseBloc {
     result.fold(
       (Failure failure) {
         addPopularMoviesState(RequestState.error);
-        message.add(failure.message);
+        messageSubject.add(failure.message);
       },
       (List<Movie> moviesData) {
         addPopularMoviesState(RequestState.loaded);
@@ -150,7 +152,7 @@ class MovieListBloc extends BaseBloc {
     result.fold(
       (Failure failure) {
         addTopRatedMoviesState(RequestState.error);
-        message.add(failure.message);
+        messageSubject.add(failure.message);
       },
       (List<Movie> moviesData) {
         addTopRatedMoviesState(RequestState.loaded);

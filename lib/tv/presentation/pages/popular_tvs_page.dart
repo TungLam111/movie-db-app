@@ -1,10 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/bloc_provider.dart';
 import 'package:mock_bloc_stream/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/tv/presentation/bloc/popular_tvs_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
-import 'package:provider/provider.dart';
 
 import 'package:mock_bloc_stream/tv/presentation/widgets/item_card_list.dart';
 
@@ -17,13 +17,18 @@ class PopularTvsPage extends StatefulWidget {
 }
 
 class _PopularTvsPageState extends State<PopularTvsPage> {
+  late PopularTvsBloc _bloc;
   @override
   void initState() {
     super.initState();
-    Future<void>.microtask(
-      () =>
-          Provider.of<PopularTvsBloc>(context, listen: false).fetchPopularTvs(),
-    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    _bloc = BlocProvider.of<PopularTvsBloc>(context);
+    Future<void>.microtask(() => _bloc.fetchPopularTvs());
+
+    super.didChangeDependencies();
   }
 
   @override
@@ -38,7 +43,7 @@ class _PopularTvsPageState extends State<PopularTvsPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: RequiredStreamBuilder<RequestState>(
-          stream: Provider.of<PopularTvsBloc>(context).state,
+          stream: _bloc.state,
           builder: (
             BuildContext context,
             AsyncSnapshot<RequestState> snap1,
@@ -49,7 +54,7 @@ class _PopularTvsPageState extends State<PopularTvsPage> {
               );
             } else if (snap1.data == RequestState.loaded) {
               return RequiredStreamBuilder<List<Tv>>(
-                stream: Provider.of<PopularTvsBloc>(context).tvs,
+                stream: _bloc.tvs,
                 builder: (__, AsyncSnapshot<List<Tv>> snap2) {
                   if (!snap2.hasData) {
                     return const Center(
@@ -73,7 +78,7 @@ class _PopularTvsPageState extends State<PopularTvsPage> {
             } else {
               return Center(
                 key: const Key('error_message'),
-                child: Text(Provider.of<PopularTvsBloc>(context).getMessage),
+                child: Text(_bloc.getMessage),
               );
             }
           },

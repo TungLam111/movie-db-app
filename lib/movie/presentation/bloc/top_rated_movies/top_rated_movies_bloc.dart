@@ -11,36 +11,37 @@ class TopRatedMoviesBloc extends BaseBloc {
   TopRatedMoviesBloc({required this.getTopRatedMovies});
   final GetTopRatedMoviesUsecase getTopRatedMovies;
 
-  final BehaviorSubject<RequestState> _state =
+  final BehaviorSubject<RequestState> _stateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
-  Stream<RequestState> get stateStream => _state.stream;
+  Stream<RequestState> get stateStream => _stateSubject.stream;
 
-  final BehaviorSubject<List<Movie>> _movies =
+  final BehaviorSubject<List<Movie>> _moviesSubject =
       BehaviorSubject<List<Movie>>.seeded(<Movie>[]);
-  Stream<List<Movie>> get moviesStream => _movies.stream.asBroadcastStream();
+  Stream<List<Movie>> get moviesStream =>
+      _moviesSubject.stream.asBroadcastStream();
 
   Future<void> fetchTopRatedMovies() async {
-    _state.add(RequestState.loading);
+    _stateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Movie>> result =
         await getTopRatedMovies.execute();
 
     result.fold(
       (Failure failure) {
-        message.add(failure.message);
-        _state.add(RequestState.error);
+        messageSubject.add(failure.message);
+        _stateSubject.add(RequestState.error);
       },
       (List<Movie> moviesData) {
-        _movies.add(moviesData);
-        _state.add(RequestState.loaded);
+        _moviesSubject.add(moviesData);
+        _stateSubject.add(RequestState.loaded);
       },
     );
   }
 
   @override
   void dispose() {
-    _state.close();
-    _movies.close();
+    _stateSubject.close();
+    _moviesSubject.close();
     super.dispose();
   }
 }

@@ -18,10 +18,13 @@ class _BlocProvider<T> extends InheritedWidget {
 }
 
 // 1
-class BlocProviderLamcute<T extends BaseBloc> extends StatefulWidget {
-  const BlocProviderLamcute({Key? key, required this.bloc, required this.child})
-      : super(key: key);
-  final Widget child;
+class BlocProvider<T extends BaseBloc> extends StatefulWidget {
+  const BlocProvider({
+    Key? key,
+    required this.bloc,
+    this.child,
+  }) : super(key: key);
+  final Widget? child;
   final T bloc;
 
   // 2
@@ -31,18 +34,25 @@ class BlocProviderLamcute<T extends BaseBloc> extends StatefulWidget {
     return provider!.data.bloc;
   }
 
+  BlocProvider<T> cloneWithChild(Widget baby) {
+    return BlocProvider<T>(bloc: bloc, child: baby);
+  }
+
   @override
-  State<BlocProviderLamcute<BaseBloc>> createState() => _BlocProviderState<T>();
+  State<BlocProvider<BaseBloc>> createState() => _BlocProviderState<T>();
 }
 
-class _BlocProviderState<T> extends State<BlocProviderLamcute<BaseBloc>> {
+class _BlocProviderState<T> extends State<BlocProvider<BaseBloc>> {
   // 3
   T get bloc => widget.bloc as T;
 
   // 4
   @override
   Widget build(BuildContext context) {
-    return _BlocProvider<T>(data: this, child: widget.child);
+    return _BlocProvider<T>(
+      data: this,
+      child: widget.child ?? const SizedBox(),
+    );
   }
 
   // 5
@@ -50,5 +60,32 @@ class _BlocProviderState<T> extends State<BlocProviderLamcute<BaseBloc>> {
   void dispose() {
     widget.bloc.dispose();
     super.dispose();
+  }
+}
+
+class MultiBlocProvider extends StatelessWidget {
+  const MultiBlocProvider({
+    Key? key,
+    required this.providers,
+    this.child,
+    this.builder,
+  }) : super(key: key);
+
+  final Widget? child;
+  final List<BlocProvider<BaseBloc>> providers;
+  final TransitionBuilder? builder;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tree = builder != null
+        ? Builder(
+            builder: (BuildContext context) => builder!.call(context, child),
+          )
+        : child!;
+
+    for (final BlocProvider<BaseBloc> widget in providers.reversed) {
+      tree = widget.cloneWithChild(tree);
+    }
+    return tree;
   }
 }
