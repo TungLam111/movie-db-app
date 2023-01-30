@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
@@ -94,3 +93,14 @@ typedef CustomItemBuilder<T> = Widget Function(
   T item,
   int index,
 );
+
+showCustomDialog(BuildContext context, String event) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(event),
+      );
+    },
+  );
+}
