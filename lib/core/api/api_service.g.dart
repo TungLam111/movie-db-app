@@ -269,9 +269,16 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<MovieResponse> getPopularMovies({apiKey = Urls.apiKey}) async {
+  Future<MovieResponse> getPopularMovies({
+    apiKey = Urls.apiKey,
+    page,
+  }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'api_key': apiKey};
+    final queryParameters = <String, dynamic>{
+      r'api_key': apiKey,
+      r'page': page,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
@@ -292,9 +299,16 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<MovieResponse> getTopRatedMovies({apiKey = Urls.apiKey}) async {
+  Future<MovieResponse> getTopRatedMovies({
+    apiKey = Urls.apiKey,
+    page,
+  }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'api_key': apiKey};
+    final queryParameters = <String, dynamic>{
+      r'api_key': apiKey,
+      r'page': page,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio

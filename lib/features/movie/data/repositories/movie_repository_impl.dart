@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -41,10 +40,10 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getPopularMovies() async {
+  Future<Either<Failure, List<Movie>>> getPopularMovies(int? page) async {
     try {
-      final List<MovieModel> result = await remoteDataSource.getPopularMovies();
-      log(result.length.toString());
+      final List<MovieModel> result =
+          await remoteDataSource.getPopularMovies(page);
       return Right<Failure, List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
@@ -58,10 +57,10 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getTopRatedMovies() async {
+  Future<Either<Failure, List<Movie>>> getTopRatedMovies(int? page) async {
     try {
       final List<MovieModel> result =
-          await remoteDataSource.getTopRatedMovies();
+          await remoteDataSource.getTopRatedMovies(page);
       return Right<Failure, List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
@@ -169,8 +168,9 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getWatchlistMovies() async {
-    final List<MovieTable> result = await localDataSource.getWatchlistMovies();
+  Future<Either<Failure, List<Movie>>> getWatchlistMovies(int? page) async {
+    final List<MovieTable> result =
+        await localDataSource.getWatchlistMovies(page);
     return Right<Failure, List<Movie>>(
       result.map((MovieTable data) => data.toEntity()).toList(),
     );

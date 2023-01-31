@@ -7,7 +7,7 @@ abstract class MovieLocalDataSource {
   Future<String> insertWatchlist(MovieTable movie);
   Future<String> removeWatchlist(MovieTable movie);
   Future<MovieTable?> getMovieById(int id);
-  Future<List<MovieTable>> getWatchlistMovies();
+  Future<List<MovieTable>> getWatchlistMovies(int? page);
 }
 
 class MovieLocalDataSourceImpl implements MovieLocalDataSource {
@@ -45,9 +45,9 @@ class MovieLocalDataSourceImpl implements MovieLocalDataSource {
   }
 
   @override
-  Future<List<MovieTable>> getWatchlistMovies() async {
+  Future<List<MovieTable>> getWatchlistMovies(int? page) async {
     final List<Map<String, dynamic>> result =
-        await databaseHelper.getWatchlistMovies();
+        await databaseHelper.getWatchlistMovies(page);
     return result
         .map((Map<String, dynamic> data) => MovieTable.fromMap(data))
         .toList();

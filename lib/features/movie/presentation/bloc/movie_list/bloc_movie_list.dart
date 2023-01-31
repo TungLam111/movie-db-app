@@ -129,7 +129,7 @@ class BlocMovieList extends BaseBloc {
     );
 
     final Either<Failure, List<Movie>> result =
-        await getPopularMoviesUsecase.execute();
+        await getPopularMoviesUsecase.execute(1);
 
     result.fold(
       (Failure failure) {
@@ -162,7 +162,7 @@ class BlocMovieList extends BaseBloc {
     );
 
     final Either<Failure, List<Movie>> result =
-        await getTopRatedMoviesUsecase.execute();
+        await getTopRatedMoviesUsecase.execute(0);
 
     result.fold(
       (Failure failure) {

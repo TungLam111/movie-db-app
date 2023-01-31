@@ -75,7 +75,7 @@ class MovieDatabaseHelper {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getWatchlistMovies() async {
+  Future<List<Map<String, dynamic>>> getWatchlistMovies(int? page) async {
     final Database? db = await database;
     final List<Map<String, dynamic>> results =
         await db!.query(_movieWatchlistTable);

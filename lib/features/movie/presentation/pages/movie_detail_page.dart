@@ -78,7 +78,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 final MovieDetail movie = asyncSnapshot2.data!;
                 return MovieDetailContent(
                   movie: movie,
-                  isAddedToWatchlist: _bloc.isAddedToWatchlistValue,
                 );
               },
             );
@@ -97,18 +96,19 @@ class MovieDetailContent extends StatefulWidget {
   const MovieDetailContent({
     Key? key,
     required this.movie,
-    required this.isAddedToWatchlist,
   }) : super(key: key);
   final MovieDetail movie;
-  final bool isAddedToWatchlist;
 
   @override
   State<MovieDetailContent> createState() => _MovieDetailContentState();
 }
 
 class _MovieDetailContentState extends State<MovieDetailContent> {
+  late MovieDetail currentMovie;
+
   @override
   void didChangeDependencies() {
+    currentMovie = widget.movie;
     super.didChangeDependencies();
   }
 
@@ -118,9 +118,23 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
   }
 
   @override
+  void didUpdateWidget(MovieDetailContent oldWidget) {
+    if (oldWidget.movie != widget.movie) {
+      updateCurrentMovie(widget.movie);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void updateCurrentMovie(MovieDetail newMovies) {
+    if (mounted) {
+      currentMovie = newMovies;
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      key: const Key('movieDetailScrollView'),
       slivers: <Widget>[
         SliverAppBar(
           pinned: true,
@@ -147,7 +161,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                 blendMode: BlendMode.dstIn,
                 child: CachedNetworkImage(
                   width: MediaQuery.of(context).size.width,
-                  imageUrl: Urls.imageUrl(widget.movie.backdropPath!),
+                  imageUrl: Urls.imageUrl(currentMovie.backdropPath!),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -164,7 +178,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    widget.movie.title,
+                    currentMovie.title,
                     style: StylesConstant.kHeading5.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -183,7 +197,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         child: Text(
-                          widget.movie.releaseDate.split('-')[0],
+                          currentMovie.releaseDate.split('-')[0],
                           style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w500,
@@ -200,7 +214,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                           ),
                           const SizedBox(width: 4.0),
                           Text(
-                            (widget.movie.voteAverage / 2).toStringAsFixed(1),
+                            (currentMovie.voteAverage / 2).toStringAsFixed(1),
                             style: const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
@@ -209,7 +223,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                           ),
                           const SizedBox(width: 4.0),
                           Text(
-                            '(${widget.movie.voteAverage})',
+                            '(${currentMovie.voteAverage})',
                             style: const TextStyle(
                               fontSize: 1.0,
                               fontWeight: FontWeight.w500,
@@ -220,7 +234,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                       ),
                       const SizedBox(width: 16.0),
                       Text(
-                        _showDuration(widget.movie.runtime),
+                        _showDuration(currentMovie.runtime),
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 16.0,
@@ -231,54 +245,67 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                     ],
                   ),
                   const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    key: const Key('movieToWatchlist'),
-                    onPressed: () async {
-                      if (!widget.isAddedToWatchlist) {
-                        await BlocProvider.of<MovieDetailBloc>(
-                          context,
-                        ).addToWatchlist(widget.movie);
-                      } else {
-                        await BlocProvider.of<MovieDetailBloc>(
-                          context,
-                        ).removeFromWatchlist(widget.movie);
+                  RequiredStreamBuilder<bool>(
+                    stream: BlocProvider.of<MovieDetailBloc>(context)
+                        .isAddedToWatchlistStream,
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<bool> snapWatchList,
+                    ) {
+                      if (!snapWatchList.hasData ||
+                          snapWatchList.data == null) {
+                        return const SizedBox();
                       }
-                      if (!mounted) {
-                        return;
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: widget.isAddedToWatchlist
-                          ? ColorConstant.kGrey850
-                          : Colors.white,
-                      minimumSize: Size(
-                        MediaQuery.of(context).size.width,
-                        42.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        widget.isAddedToWatchlist
-                            ? const Icon(Icons.check, color: Colors.white)
-                            : const Icon(Icons.add, color: Colors.black),
-                        const SizedBox(width: 16.0),
-                        Text(
-                          widget.isAddedToWatchlist
-                              ? 'Added to watchlist'
-                              : 'Add to watchlist',
-                          style: TextStyle(
-                            color: widget.isAddedToWatchlist
-                                ? Colors.white
-                                : Colors.black,
+                      bool isAddedToWatchlist = snapWatchList.data!;
+                      return ElevatedButton(
+                        onPressed: () async {
+                          if (isAddedToWatchlist) {
+                            await BlocProvider.of<MovieDetailBloc>(
+                              context,
+                            ).addToWatchlist(currentMovie);
+                          } else {
+                            await BlocProvider.of<MovieDetailBloc>(
+                              context,
+                            ).removeFromWatchlist(currentMovie);
+                          }
+                          if (!mounted) {
+                            return;
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isAddedToWatchlist
+                              ? ColorConstant.kGrey850
+                              : Colors.white,
+                          minimumSize: Size(
+                            MediaQuery.of(context).size.width,
+                            42.0,
                           ),
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            isAddedToWatchlist
+                                ? const Icon(Icons.check, color: Colors.white)
+                                : const Icon(Icons.add, color: Colors.black),
+                            const SizedBox(width: 16.0),
+                            Text(
+                              isAddedToWatchlist
+                                  ? 'Added to watchlist'
+                                  : 'Add to watchlist',
+                              style: TextStyle(
+                                color: isAddedToWatchlist
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 16.0),
                   Text(
-                    widget.movie.overview,
+                    currentMovie.overview,
                     style: const TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.w400,
@@ -287,7 +314,7 @@ class _MovieDetailContentState extends State<MovieDetailContent> {
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    'Genres: ${_showGenres(widget.movie.genres)}',
+                    'Genres: ${_showGenres(currentMovie.genres)}',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 12.0,

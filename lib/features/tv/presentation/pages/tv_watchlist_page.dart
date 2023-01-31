@@ -1,5 +1,7 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
+import 'package:mock_bloc_stream/core/extension/extension.dart';
 import 'package:mock_bloc_stream/features/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/watchlist_tv_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
@@ -12,42 +14,47 @@ class TvWatchlist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RequiredStreamBuilder<RequestState>(
-      stream: BlocProvider.of<WatchlistTvBloc>(context).watchlistStateStream,
+    return RequiredStreamBuilder<TupleEx2<List<Tv>, RequestState>>(
+      stream: BlocProvider.of<WatchlistTvBloc>(context).tupleStream,
       builder: (
-        BuildContext context,
-        AsyncSnapshot<RequestState> snapshot,
+        _,
+        AsyncSnapshot<TupleEx2<List<Tv>, RequestState>> asyncSnapshot,
       ) {
-        if (snapshot.data == RequestState.loading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.data == RequestState.loaded) {
-          return RequiredStreamBuilder<List<Tv>>(
-            stream:
-                BlocProvider.of<WatchlistTvBloc>(context).watchlistTvsStream,
-            builder: (__, AsyncSnapshot<List<Tv>> snapshot2) {
-              if (!snapshot2.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+        if (!asyncSnapshot.hasData) {
+          return const SizedBox();
+        }
+        final TupleEx2<List<Tv>, RequestState>? data = asyncSnapshot.data;
+        List<Tv> tvs = data?.value1 ?? <Tv>[];
+        return FadeInUp(
+          from: 20,
+          duration: const Duration(milliseconds: 500),
+          child: ListView.builder(
+            // controller: _scrollController,
+            itemBuilder: (BuildContext context, int index) {
+              if (data == null) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               }
-              return ListView.builder(
-                key: const Key('tvWatchlist'),
-                itemCount: snapshot2.data!.length,
-                padding: const EdgeInsets.all(16.0),
-                itemBuilder: (BuildContext context, int index) {
-                  final Tv tv = snapshot2.data![index];
-                  return ItemCard(
-                    tv: tv,
-                  );
-                },
-              );
+              return index < tvs.length
+                  ? ItemCard(
+                      tv: tvs[index],
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
             },
-          );
-        }
-        return const Center(
-          key: Key('error_message'),
-          child: Text(
-            'Cannot get tv watchlist',
+            itemCount: data == null
+                ? 1
+                : data.value2 == RequestState.loading
+                    ? tvs.length + 1
+                    : tvs.length,
           ),
         );
       },

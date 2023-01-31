@@ -81,11 +81,13 @@ abstract class ApiService {
   @GET('/movie/popular')
   Future<MovieResponse> getPopularMovies({
     @Query('api_key') String apiKey = Urls.apiKey,
+    @Query('page') int? page,
   });
 
   @GET('/movie/top_rated')
   Future<MovieResponse> getTopRatedMovies({
     @Query('api_key') String apiKey = Urls.apiKey,
+    @Query('page') int? page,
   });
 
   @GET('/movie/{id}')

@@ -1,5 +1,7 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
+import 'package:mock_bloc_stream/core/extension/extension.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/watchlist_movie/watchlist_movie_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
@@ -11,40 +13,47 @@ class MovieWatchlist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RequiredStreamBuilder<RequestState>(
-      stream: BlocProvider.of<WatchlistMovieBloc>(context).watchlistStateStream,
-      builder: (_, AsyncSnapshot<RequestState> snapshot) {
-        if (snapshot.data == RequestState.loading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.data == RequestState.loaded) {
-          return RequiredStreamBuilder<List<Movie>>(
-            stream: BlocProvider.of<WatchlistMovieBloc>(context)
-                .watchlistMoviesStream,
-            builder: (__, AsyncSnapshot<List<Movie>> snapshot2) {
-              if (!snapshot2.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+    return RequiredStreamBuilder<TupleEx2<List<Movie>, RequestState>>(
+      stream: BlocProvider.of<WatchlistMovieBloc>(context).tupleStream,
+      builder: (
+        _,
+        AsyncSnapshot<TupleEx2<List<Movie>, RequestState>> asyncSnapshot,
+      ) {
+        if (!asyncSnapshot.hasData) {
+          return const SizedBox();
+        }
+        final TupleEx2<List<Movie>, RequestState>? data = asyncSnapshot.data;
+        List<Movie> movies = data?.value1 ?? <Movie>[];
+        return FadeInUp(
+          from: 20,
+          duration: const Duration(milliseconds: 500),
+          child: ListView.builder(
+            // controller: _scrollController,
+            itemBuilder: (BuildContext context, int index) {
+              if (data == null) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               }
-
-              return ListView.builder(
-                key: const Key('movieWatchlist'),
-                itemCount: snapshot2.data!.length,
-                padding: const EdgeInsets.all(16.0),
-                itemBuilder: (BuildContext context, int index) {
-                  final Movie movie = snapshot2.data![index];
-                  return ItemCard(
-                    movie: movie,
-                  );
-                },
-              );
+              return index < movies.length
+                  ? ItemCard(
+                      movie: movies[index],
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
             },
-          );
-        }
-        return const Center(
-          key:  Key('error_message'),
-          child: Text(
-            'Cannot get movie watch list',
+            itemCount: data == null
+                ? 1
+                : data.value2 == RequestState.loading
+                    ? movies.length + 1
+                    : movies.length,
           ),
         );
       },

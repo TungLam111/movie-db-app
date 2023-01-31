@@ -8,7 +8,7 @@ class GetTopRatedMoviesUsecase {
   GetTopRatedMoviesUsecase(this.repository);
   final MovieRepository repository;
 
-  Future<Either<Failure, List<Movie>>> execute() {
-    return repository.getTopRatedMovies();
+  Future<Either<Failure, List<Movie>>> execute(int? page) {
+    return repository.getTopRatedMovies(page);
   }
 }

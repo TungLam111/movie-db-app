@@ -129,7 +129,7 @@ class MovieListBloc extends BaseBloc {
     addPopularMoviesState(RequestState.loading);
 
     final Either<Failure, List<Movie>> result =
-        await getPopularMoviesUsecase.execute();
+        await getPopularMoviesUsecase.execute(1);
     result.fold(
       (Failure failure) {
         addPopularMoviesState(RequestState.error);
@@ -146,7 +146,7 @@ class MovieListBloc extends BaseBloc {
     addTopRatedMoviesState(RequestState.loading);
 
     final Either<Failure, List<Movie>> result =
-        await getTopRatedMoviesUsecase.execute();
+        await getTopRatedMoviesUsecase.execute(0);
     result.fold(
       (Failure failure) {
         addTopRatedMoviesState(RequestState.error);

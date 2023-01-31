@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
+import 'package:mock_bloc_stream/core/extension/extension.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/popular_movies/popular_movies_bloc.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
@@ -18,6 +19,7 @@ class PopularMoviesPage extends StatefulWidget {
 
 class _PopularMoviesPageState extends State<PopularMoviesPage> {
   late PopularMoviesBloc _bloc;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -26,14 +28,23 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
 
   @override
   void didChangeDependencies() {
-    _bloc = BlocProvider.of<PopularMoviesBloc>(context);
-    _bloc.fetchPopularMovies();
+    _bloc = BlocProvider.of<PopularMoviesBloc>(context)..loadMovies();
+
+    _scrollController = ScrollController()
+      ..addListener(() {
+        if (_scrollController.position.pixels + 100 >=
+            _scrollController.position.maxScrollExtent) {
+          _bloc.loadMovies();
+        }
+      });
+
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
     _bloc.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -48,46 +59,48 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: RequiredStreamBuilder<RequestState>(
-          stream: _bloc.getWatchlistMovieStateStream,
+        child: RequiredStreamBuilder<TupleEx2<List<Movie>, RequestState>>(
+          stream: _bloc.movieStream,
           builder: (
             BuildContext context,
-            AsyncSnapshot<RequestState> asyncSnapshot,
+            AsyncSnapshot<TupleEx2<List<Movie>, RequestState>> asyncSnapshot,
           ) {
-            if (asyncSnapshot.data == RequestState.loading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (asyncSnapshot.data == RequestState.loaded) {
-              return RequiredStreamBuilder<List<Movie>>(
-                stream: _bloc.getMoviesStream,
-                builder: (__, AsyncSnapshot<List<Movie>> asyncSnapshot2) {
-                  if (!asyncSnapshot2.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+            if (!asyncSnapshot.hasData) {
+              return const SizedBox();
+            }
+            final TupleEx2<List<Movie>, RequestState>? data =
+                asyncSnapshot.data;
+            List<Movie> movies = data?.value1 ?? <Movie>[];
+            return FadeInUp(
+              from: 20,
+              duration: const Duration(milliseconds: 500),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemBuilder: (BuildContext context, int index) {
+                  if (data == null) {
+                    return const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     );
                   }
-                  return FadeInUp(
-                    from: 20,
-                    duration: const Duration(milliseconds: 500),
-                    child: ListView.builder(
-                      key: const Key('popularMoviesListView'),
-                      itemBuilder: (BuildContext context, int index) {
-                        final Movie movie = asyncSnapshot2.data![index];
-                        return ItemCard(
-                          movie: movie,
+                  return index < movies.length
+                      ? ItemCard(
+                          movie: movies[index],
+                        )
+                      : const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         );
-                      },
-                      itemCount: asyncSnapshot2.data!.length,
-                    ),
-                  );
                 },
-              );
-            }
-            return Center(
-              key: const Key('error_message'),
-              child: Text(
-                _bloc.currentMessage,
+                itemCount: data == null
+                    ? 1
+                    : data.value2 == RequestState.loading
+                        ? movies.length + 1
+                        : movies.length,
               ),
             );
           },

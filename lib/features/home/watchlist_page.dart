@@ -31,17 +31,17 @@ class _WatchlistPageState extends State<WatchlistPage> with RouteAware {
     _tvBloc = BlocProvider.of<WatchlistTvBloc>(context);
 
     Future<void>.microtask(
-      () => _movieBloc.fetchWatchlistMovies(),
+      () => _movieBloc.loadMovies(),
     );
     Future<void>.microtask(
-      () => _tvBloc.fetchWatchlistTvs(),
+      () => _tvBloc.loadTvs(),
     );
   }
 
   @override
   void didPopNext() {
-    _movieBloc.fetchWatchlistMovies();
-    _tvBloc.fetchWatchlistTvs();
+    _movieBloc.loadMovies();
+    _tvBloc.loadTvs();
   }
 
   @override

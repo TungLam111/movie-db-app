@@ -4,11 +4,10 @@ import '../entities/movie.dart';
 import '../repositories/movie_repository.dart';
 
 class GetWatchlistMoviesUsecase {
-
   GetWatchlistMoviesUsecase(this._repository);
   final MovieRepository _repository;
 
-  Future<Either<Failure, List<Movie>>> execute() {
-    return _repository.getWatchlistMovies();
+  Future<Either<Failure, List<Movie>>> execute(int? page) {
+    return _repository.getWatchlistMovies(page);
   }
 }

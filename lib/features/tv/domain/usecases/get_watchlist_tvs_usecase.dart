@@ -9,7 +9,7 @@ class GetWatchlistTvsUsecase {
   GetWatchlistTvsUsecase(this.repository);
   final TvRepository repository;
 
-  Future<Either<Failure, List<Tv>>> execute() {
+  Future<Either<Failure, List<Tv>>> execute(int? page) {
     return repository.getWatchlistTvs();
   }
 }

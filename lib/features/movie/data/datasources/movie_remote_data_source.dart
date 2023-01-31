@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:mock_bloc_stream/core/api/api_service.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
@@ -10,8 +9,8 @@ import 'package:mock_bloc_stream/features/movie/data/models/movie_response.dart'
 
 abstract class MovieRemoteDataSource {
   Future<List<MovieModel>> getNowPlayingMovies();
-  Future<List<MovieModel>> getPopularMovies();
-  Future<List<MovieModel>> getTopRatedMovies();
+  Future<List<MovieModel>> getPopularMovies(int? page);
+  Future<List<MovieModel>> getTopRatedMovies(int? page);
   Future<MovieDetailResponse> getMovieDetail(int id);
   Future<List<MovieModel>> getMovieRecommendations(int id);
   Future<List<MovieModel>> searchMovies(String query);
@@ -35,10 +34,10 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   }
 
   @override
-  Future<List<MovieModel>> getPopularMovies() async {
+  Future<List<MovieModel>> getPopularMovies(int? page) async {
     try {
-      final MovieResponse response = await client.getPopularMovies();
-      log(response.movieList.length.toString());
+      final MovieResponse response =
+          await client.getPopularMovies(page: page ?? 0);
       return response.movieList;
     } on ServerException {
       throw ServerException();
@@ -48,9 +47,10 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   }
 
   @override
-  Future<List<MovieModel>> getTopRatedMovies() async {
+  Future<List<MovieModel>> getTopRatedMovies(int? page) async {
     try {
-      final MovieResponse response = await client.getTopRatedMovies();
+      final MovieResponse response =
+          await client.getTopRatedMovies(page: page ?? 0);
       return response.movieList;
     } on ServerException {
       throw ServerException();
