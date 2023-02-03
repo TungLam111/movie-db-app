@@ -1,17 +1,10 @@
-import 'dart:developer';
-
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
-void logg(dynamic a) {
-  log(a.toString());
-}
-
 class HomeBloc extends BaseBloc {
   HomeBloc() {
     _stateSubject.stream.listen(_onStateChange);
-
   }
   final BehaviorSubject<GeneralContentType> _stateSubject =
       BehaviorSubject<GeneralContentType>.seeded(GeneralContentType.movie);

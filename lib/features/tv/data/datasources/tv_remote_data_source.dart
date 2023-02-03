@@ -12,8 +12,8 @@ import '../models/tv_season_episode_response.dart';
 
 abstract class TvRemoteDataSource {
   Future<List<TvModel>> getOnTheAirTvs();
-  Future<List<TvModel>> getPopularTvs();
-  Future<List<TvModel>> getTopRatedTvs();
+  Future<List<TvModel>> getPopularTvs(int? page);
+  Future<List<TvModel>> getTopRatedTvs(int? page);
   Future<TvDetailResponse> getTvDetail(int id);
   Future<List<TvSeasonEpisodeModel>> getTvSeasonEpisodes(
     int id,
@@ -41,9 +41,9 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   }
 
   @override
-  Future<List<TvModel>> getPopularTvs() async {
+  Future<List<TvModel>> getPopularTvs(int? page) async {
     try {
-      final TvResponse response = await client.getPopularTvs();
+      final TvResponse response = await client.getPopularTvs(page: page ?? 1);
       return response.tvList;
     } on ServerException {
       throw ServerException();
@@ -53,9 +53,9 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   }
 
   @override
-  Future<List<TvModel>> getTopRatedTvs() async {
+  Future<List<TvModel>> getTopRatedTvs(int? page) async {
     try {
-      final TvResponse response = await client.getTopRatedTvs();
+      final TvResponse response = await client.getTopRatedTvs(page: page ?? 1);
       return response.tvList;
     } on ServerException {
       throw ServerException();

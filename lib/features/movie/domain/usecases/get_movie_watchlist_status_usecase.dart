@@ -6,7 +6,7 @@ class GetMovieWatchlistStatusUsecase {
   });
   final MovieRepository movieRepository;
 
-  Future<bool> execute(int id) async {
+  Future<bool> execute(int id) {
     return movieRepository.isAddedToWatchlist(id);
   }
 }

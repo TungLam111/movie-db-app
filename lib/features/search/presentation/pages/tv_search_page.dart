@@ -23,7 +23,6 @@ class TvSearchPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextField(
-              key: const Key('enterTvQuery'),
               onChanged: (String query) {
                 BlocProvider.of<TvSearchBloc>(context)
                     .add(OnQueryChanged(query));

@@ -4,11 +4,9 @@ import 'package:mock_bloc_stream/utils/styles.dart';
 class SubHeading extends StatelessWidget {
   const SubHeading({
     Key? key,
-    this.valueKey,
     required this.text,
     required this.onSeeMoreTapped,
   }) : super(key: key);
-  final String? valueKey;
   final String text;
   final Function() onSeeMoreTapped;
 
@@ -26,7 +24,6 @@ class SubHeading extends StatelessWidget {
         children: <Widget>[
           Text(text, style: StylesConstant.kHeading6),
           InkWell(
-            key: Key(valueKey!),
             onTap: onSeeMoreTapped,
             child: Padding(
               padding: const EdgeInsets.all(8.0),

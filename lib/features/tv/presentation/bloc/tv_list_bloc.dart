@@ -71,7 +71,7 @@ class TvListBloc extends BaseBloc {
     _popularTvsStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Tv>> result =
-        await getPopularTvsUsecase.execute();
+        await getPopularTvsUsecase.execute(1);
     result.fold(
       (Failure failure) {
         _popularTvsStateSubject.add(RequestState.error);
@@ -88,7 +88,7 @@ class TvListBloc extends BaseBloc {
     _topRatedTvsStateSubject.add(RequestState.loading);
 
     final Either<Failure, List<Tv>> result =
-        await getTopRatedTvsUsecase.execute();
+        await getTopRatedTvsUsecase.execute(1);
     result.fold(
       (Failure failure) {
         _topRatedTvsStateSubject.add(RequestState.error);

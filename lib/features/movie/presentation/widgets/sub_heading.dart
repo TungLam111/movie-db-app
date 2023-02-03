@@ -26,7 +26,6 @@ class SubHeading extends StatelessWidget {
         children: <Widget>[
           Text(text, style: StylesConstant.kHeading6),
           InkWell(
-            key: Key(valueKey!),
             onTap: onSeeMoreTapped,
             child: Padding(
               padding: const EdgeInsets.all(8.0),

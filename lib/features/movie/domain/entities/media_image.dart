@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-class MediaImage extends Equatable {
+class MediaImage {
   const MediaImage({
     required this.id,
     required this.backdropPaths,
@@ -11,8 +9,4 @@ class MediaImage extends Equatable {
   final List<String> backdropPaths;
   final List<String> logoPaths;
   final List<String> posterPaths;
-
-  @override
-  List<Object?> get props =>
-      <Object?>[id, backdropPaths, logoPaths, posterPaths];
 }

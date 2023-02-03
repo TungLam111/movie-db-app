@@ -17,15 +17,15 @@ class WatchlistMovieBloc extends BaseBloc {
     final BehaviorSubject<void> moviesSubject =
         BehaviorSubject<void>.seeded(null);
     int currentLengthList = 0;
-    int currentPage = 1;
 
+    // With load more function
     final Stream<TupleEx2<List<Movie>, RequestState>> loadMovieStream =
         Rx.combineLatest2(
       moviesSubject
           .map((_) => currentLengthList)
           .exhaustMap(
             (int numberList) => Rx.fromCallable(
-              () => getWatchlistMoviesUsecase.execute(currentPage),
+              () => getWatchlistMoviesUsecase.execute(null),
             )
                 .doOnListen(() => stateSubject.add(RequestState.loading))
                 .doOnError((_, __) {
@@ -54,16 +54,12 @@ class WatchlistMovieBloc extends BaseBloc {
               temp = moviesData;
             },
           );
-          if (accumulated is List) {
-            return <Movie>[...(accumulated as List<Movie>), ...temp];
-          }
           return <Movie>[...temp];
         },
         0,
       ).doOnData(
         (Object list) {
           currentLengthList = (list as List<Movie>).length;
-          currentPage = currentPage + 1;
         },
       ),
       stateSubject.stream,

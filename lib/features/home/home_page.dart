@@ -10,7 +10,6 @@ import 'package:mock_bloc_stream/features/tv/presentation/pages/main_tv_page.dar
 import 'package:mock_bloc_stream/utils/color.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
-import 'package:mock_bloc_stream/utils/styles.dart';
 import 'watchlist_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -110,7 +109,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       GestureDetector(
-                        key: const Key('closeDrawerButton'),
                         onTap: toggle,
                         child: const CircleAvatar(
                           backgroundColor: Colors.white,
@@ -119,40 +117,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             color: ColorConstant.kRichBlack,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 128.0),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: const Image(
-                                image: AssetImage('assets/user.png'),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            flex: 3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Aditya',
-                                  style: StylesConstant.kHeading6.copyWith(
-                                    fontSize: 16.0,
-                                  ),
-                                ),
-                                Text(
-                                  'aditya@mail.co',
-                                  style: StylesConstant.kBodyText.copyWith(
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
                       ),
                       const SizedBox(height: 32.0),
                       RequiredStreamBuilder<GeneralContentType>(
@@ -164,7 +128,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           return Column(
                             children: <Widget>[
                               ListTile(
-                                key: const Key('movieListTile'),
                                 onTap: () {
                                   _homeBloc.setState(GeneralContentType.movie);
                                   toggle();
@@ -183,7 +146,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ),
                               ListTile(
-                                key: const Key('tvListTile'),
                                 onTap: () {
                                   _homeBloc.setState(GeneralContentType.tv);
                                   toggle();
@@ -206,7 +168,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         },
                       ),
                       ListTile(
-                        key: const Key('watchlistListTile'),
                         onTap: () {
                           Navigator.pushNamed(context, WatchlistPage.routeName);
                         },
@@ -216,7 +177,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         textColor: Colors.white70,
                       ),
                       ListTile(
-                        key: const Key('aboutListTile'),
                         onTap: () {
                           Navigator.pushNamed(context, AboutPage.routeName);
                         },
@@ -245,7 +205,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         appBar: AppBar(
                           toolbarOpacity: toolbarOpacity,
                           leading: IconButton(
-                            key: const Key('drawerButton'),
                             icon: const Icon(Icons.menu),
                             splashRadius: 20.0,
                             onPressed: toggle,
@@ -269,7 +228,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 }
                                 final GeneralContentType state = snapshot.data!;
                                 return IconButton(
-                                  key: const Key('searchButton'),
                                   icon: const Icon(Icons.search),
                                   splashRadius: 20.0,
                                   onPressed: () => Navigator.pushNamed(

@@ -20,96 +20,96 @@ class BlocDI {
   BlocDI._();
 
   static Future<void> init(GetIt locator) async {
+    locator.registerFactory(() => MovieSearchBloc(locator()));
+    locator.registerFactory(() => TvSearchBloc(locator()));
 
-  locator.registerFactory(() => MovieSearchBloc(locator()));
-  locator.registerFactory(() => TvSearchBloc(locator()));
+    locator.registerFactory(
+      () => AuthBloc(
+        loginUsecase: locator(),
+        logoutUsecase: locator(),
+      ),
+    );
 
-  locator.registerFactory(
-    () => AuthBloc(
-      loginUsecase: locator(),
-      logoutUsecase: locator(),
-    ),
-  );
+    locator.registerFactory(() => HomeBloc());
 
-  locator.registerFactory(() => HomeBloc());
+    locator.registerFactory(
+      () => MovieListBloc(
+        getNowPlayingMoviesUsecase: locator(),
+        getPopularMoviesUsecase: locator(),
+        getTopRatedMoviesUsecase: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => PopularMoviesBloc(
+        locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => TopRatedMoviesBloc(
+        getTopRatedMovies: locator(),
+      ),
+    );
+    locator.registerFactoryParam<MovieDetailBloc, int, void>(
+      (int id, _) => MovieDetailBloc(
+        movieId: id,
+        getMovieDetail: locator(),
+        getMovieRecommendations: locator(),
+        getWatchListStatus: locator(),
+        saveWatchlist: locator(),
+        removeWatchlist: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => MovieImagesBloc(
+        getMovieImagesUsecase: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => WatchlistMovieBloc(
+        getWatchlistMoviesUsecase: locator(),
+      ),
+    );
 
-  locator.registerFactory(
-    () => MovieListBloc(
-      getNowPlayingMoviesUsecase: locator(),
-      getPopularMoviesUsecase: locator(),
-      getTopRatedMoviesUsecase: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => PopularMoviesBloc(
-      locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => TopRatedMoviesBloc(
-      getTopRatedMovies: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => MovieDetailBloc(
-      getMovieDetail: locator(),
-      getMovieRecommendations: locator(),
-      getWatchListStatus: locator(),
-      saveWatchlist: locator(),
-      removeWatchlist: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => MovieImagesBloc(
-      getMovieImagesUsecase: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => WatchlistMovieBloc(
-      getWatchlistMoviesUsecase: locator(),
-    ),
-  );
-
-  locator.registerFactory(
-    () => TvListBloc(
-      getOnTheAirTvsUsecase: locator(),
-      getPopularTvsUsecase: locator(),
-      getTopRatedTvsUsecase: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => PopularTvsBloc(
-      locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => TopRatedTvsBloc(
-      locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => TvDetailBloc(
-      getTvDetailUsecase: locator(),
-      getTvRecommendationsUsecase: locator(),
-      getWatchListStatusUsecase: locator(),
-      saveWatchlistUsecase: locator(),
-      removeWatchlistUsecase: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => TvSeasonEpisodesBloc(
-      getTvSeasonEpisodes: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => TvImagesBloc(
-      getTvImagesUsecase: locator(),
-    ),
-  );
-  locator.registerFactory(
-    () => WatchlistTvBloc(
-      getWatchlistTvsUsecase: locator(),
-    ),
-  );
+    locator.registerFactory(
+      () => TvListBloc(
+        getOnTheAirTvsUsecase: locator(),
+        getPopularTvsUsecase: locator(),
+        getTopRatedTvsUsecase: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => PopularTvsBloc(
+        getPopularTvsUsecase: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => TopRatedTvsBloc(
+        getTopRatedTvsUsecase: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => TvDetailBloc(
+        getTvDetailUsecase: locator(),
+        getTvRecommendationsUsecase: locator(),
+        getWatchListStatusUsecase: locator(),
+        saveWatchlistUsecase: locator(),
+        removeWatchlistUsecase: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => TvSeasonEpisodesBloc(
+        getTvSeasonEpisodes: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => TvImagesBloc(
+        getTvImagesUsecase: locator(),
+      ),
+    );
+    locator.registerFactory(
+      () => WatchlistTvBloc(
+        getWatchlistTvsUsecase: locator(),
+      ),
+    );
   }
 }

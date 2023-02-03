@@ -88,7 +88,6 @@ class PopularMoviesBloc extends BaseBloc {
   final Stream<TupleEx2<List<Movie>, RequestState>> movieStream;
   final Function0 loadMovies;
 
-
   final void Function() whatToDispose;
 
   @override

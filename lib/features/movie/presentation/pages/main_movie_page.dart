@@ -83,7 +83,6 @@ class _MainMoviePageState extends State<_MainMoviePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        key: const Key('movieScrollView'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -151,7 +150,6 @@ class _MainMoviePageState extends State<_MainMoviePage> {
                   items: snap2.data!.map(
                     (Movie item) {
                       return GestureDetector(
-                        key: const Key('openMovieMinimalDetail'),
                         onTap: () {
                           showModalBottomSheet(
                             shape: const RoundedRectangleBorder(

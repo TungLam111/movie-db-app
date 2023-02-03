@@ -180,8 +180,9 @@ class OpenbookProviderState extends State<OpenbookProvider> {
       removeWatchlistUsecase: removeWatchlistTvUseCase,
     );
 
-    topRatedTvsBloc = TopRatedTvsBloc(getTopRatedTvsUsecase);
-    popularTvsBloc = PopularTvsBloc(getPopularTvsUsecase);
+    topRatedTvsBloc =
+        TopRatedTvsBloc(getTopRatedTvsUsecase: getTopRatedTvsUsecase);
+    popularTvsBloc = PopularTvsBloc(getPopularTvsUsecase: getPopularTvsUsecase);
     tvListBloc = TvListBloc(
       getOnTheAirTvsUsecase: getOnTheAirTvsUsecase,
       getPopularTvsUsecase: getPopularTvsUsecase,
@@ -191,6 +192,7 @@ class OpenbookProviderState extends State<OpenbookProvider> {
     movieImagesBloc =
         MovieImagesBloc(getMovieImagesUsecase: getMovieImagesUseCase);
     movieDetailBloc = MovieDetailBloc(
+      movieId: 0,
       getMovieDetail: getMovieDetailUseCase,
       getMovieRecommendations: getMovieRecommendationsUseCase,
       getWatchListStatus: getMovieWatchlistStatusUseCase,

@@ -16,7 +16,7 @@ class MovieWatchlist extends StatelessWidget {
     return RequiredStreamBuilder<TupleEx2<List<Movie>, RequestState>>(
       stream: BlocProvider.of<WatchlistMovieBloc>(context).tupleStream,
       builder: (
-        _,
+        BuildContext context,
         AsyncSnapshot<TupleEx2<List<Movie>, RequestState>> asyncSnapshot,
       ) {
         if (!asyncSnapshot.hasData) {
@@ -28,7 +28,6 @@ class MovieWatchlist extends StatelessWidget {
           from: 20,
           duration: const Duration(milliseconds: 500),
           child: ListView.builder(
-            // controller: _scrollController,
             itemBuilder: (BuildContext context, int index) {
               if (data == null) {
                 return const Padding(

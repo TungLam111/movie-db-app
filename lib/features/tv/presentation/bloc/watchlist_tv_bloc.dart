@@ -16,7 +16,6 @@ class WatchlistTvBloc extends BaseBloc {
 
     final BehaviorSubject<void> tvsSubject = BehaviorSubject<void>.seeded(null);
     int currentLengthList = 0;
-    int currentPage = 1;
 
     final Stream<TupleEx2<List<Tv>, RequestState>> loadTvStream =
         Rx.combineLatest2(
@@ -24,7 +23,7 @@ class WatchlistTvBloc extends BaseBloc {
           .map((_) => currentLengthList)
           .exhaustMap(
             (int numberList) => Rx.fromCallable(
-              () => getWatchlistTvsUsecase.execute(currentPage),
+              () => getWatchlistTvsUsecase.execute(null),
             )
                 .doOnListen(() => stateSubject.add(RequestState.loading))
                 .doOnError((_, __) {
@@ -62,7 +61,6 @@ class WatchlistTvBloc extends BaseBloc {
       ).doOnData(
         (Object list) {
           currentLengthList = (list as List<Tv>).length;
-          currentPage = currentPage + 1;
         },
       ),
       stateSubject.stream,

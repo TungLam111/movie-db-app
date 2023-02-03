@@ -146,7 +146,7 @@ class MovieListBloc extends BaseBloc {
     addTopRatedMoviesState(RequestState.loading);
 
     final Either<Failure, List<Movie>> result =
-        await getTopRatedMoviesUsecase.execute(0);
+        await getTopRatedMoviesUsecase.execute(null);
     result.fold(
       (Failure failure) {
         addTopRatedMoviesState(RequestState.error);

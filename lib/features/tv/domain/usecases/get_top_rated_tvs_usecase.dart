@@ -8,7 +8,7 @@ class GetTopRatedTvsUsecase {
   GetTopRatedTvsUsecase(this.repository);
   final TvRepository repository;
 
-  Future<Either<Failure, List<Tv>>> execute() {
-    return repository.getTopRatedTvs();
+  Future<Either<Failure, List<Tv>>> execute(int? page) {
+    return repository.getTopRatedTvs(page);
   }
 }

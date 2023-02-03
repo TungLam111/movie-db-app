@@ -37,7 +37,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   Future<List<MovieModel>> getPopularMovies(int? page) async {
     try {
       final MovieResponse response =
-          await client.getPopularMovies(page: page ?? 0);
+          await client.getPopularMovies(page: page ?? 1);
       return response.movieList;
     } on ServerException {
       throw ServerException();
@@ -50,7 +50,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   Future<List<MovieModel>> getTopRatedMovies(int? page) async {
     try {
       final MovieResponse response =
-          await client.getTopRatedMovies(page: page ?? 0);
+          await client.getTopRatedMovies(page: page ?? 1);
       return response.movieList;
     } on ServerException {
       throw ServerException();

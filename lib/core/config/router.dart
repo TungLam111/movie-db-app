@@ -64,7 +64,9 @@ class AppRouter {
       case MovieDetailPage.routeName:
         return MaterialPageRoute<dynamic>(
           builder: (_) => BlocProvider<MovieDetailBloc>(
-            bloc: locator<MovieDetailBloc>(),
+            bloc: locator<MovieDetailBloc>(
+              param1: settings.arguments as int,
+            ),
             child: MovieDetailPage(
               id: settings.arguments as int,
             ),

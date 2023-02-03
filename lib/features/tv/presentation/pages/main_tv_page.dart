@@ -83,13 +83,11 @@ class _MainTvPageState extends State<_MainTvPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        key: const Key('tvScrollView'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildTheAirTvsWidget(),
             SubHeading(
-              valueKey: 'seePopularTvs',
               text: 'Popular',
               onSeeMoreTapped: () => Navigator.pushNamed(
                 context,
@@ -98,7 +96,6 @@ class _MainTvPageState extends State<_MainTvPage> {
             ),
             _buildPopularTvsWidget(),
             SubHeading(
-              valueKey: 'seeTopRatedTvs',
               text: 'Top Rated',
               onSeeMoreTapped: () => Navigator.pushNamed(
                 context,
@@ -142,7 +139,6 @@ class _MainTvPageState extends State<_MainTvPage> {
                   items: snap2.data!.map(
                     (Tv item) {
                       return GestureDetector(
-                        key: const Key('openTvMinimalDetail'),
                         onTap: () {
                           showModalBottomSheet(
                             shape: const RoundedRectangleBorder(
@@ -154,7 +150,6 @@ class _MainTvPageState extends State<_MainTvPage> {
                             context: context,
                             builder: (BuildContext context) {
                               return MinimalDetail(
-                                keyValue: 'goToTvDetail',
                                 closeKeyValue: 'closeTvMinimalDetail',
                                 tv: item,
                               );

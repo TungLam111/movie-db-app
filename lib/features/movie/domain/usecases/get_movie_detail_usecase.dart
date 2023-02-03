@@ -8,7 +8,7 @@ class GetMovieDetailUsecase {
   GetMovieDetailUsecase(this.repository);
   final MovieRepository repository;
 
-  Future<Either<Failure, MovieDetail>> execute(int id) {
-    return repository.getMovieDetail(id);
+  Future<Either<Failure, MovieDetail>> execute(int id) async {
+    return await repository.getMovieDetail(id);
   }
 }

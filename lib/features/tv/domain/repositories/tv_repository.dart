@@ -18,8 +18,8 @@ part '../../data/repositories/tv_repository_impl.dart';
 
 abstract class TvRepository {
   Future<Either<Failure, List<Tv>>> getOnTheAirTvs();
-  Future<Either<Failure, List<Tv>>> getPopularTvs();
-  Future<Either<Failure, List<Tv>>> getTopRatedTvs();
+  Future<Either<Failure, List<Tv>>> getPopularTvs(int? page);
+  Future<Either<Failure, List<Tv>>> getTopRatedTvs(int? page);
   Future<Either<Failure, TvDetail>> getTvDetail(int id);
   Future<Either<Failure, List<Tv>>> getTvRecommendations(int id);
   Future<Either<Failure, List<TvSeasonEpisode>>> getTvSeasonEpisodes(

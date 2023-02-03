@@ -70,7 +70,6 @@ class MinimalDetail extends StatelessWidget {
                                 height: 36.0,
                                 width: 36.0,
                                 child: TextButton(
-                                  key: Key(closeKeyValue ?? '-'),
                                   onPressed: () => Navigator.pop(context),
                                   style: TextButton.styleFrom(
                                     backgroundColor:
@@ -139,7 +138,6 @@ class MinimalDetail extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextButton(
-              key: Key(keyValue ?? '-'),
               onPressed: () {
                 Navigator.pushNamed(
                   context,

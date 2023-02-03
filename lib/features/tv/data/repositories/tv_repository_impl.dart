@@ -25,9 +25,9 @@ class TvRepositoryImpl implements TvRepository {
   }
 
   @override
-  Future<Either<Failure, List<Tv>>> getPopularTvs() async {
+  Future<Either<Failure, List<Tv>>> getPopularTvs(int? page) async {
     try {
-      final List<TvModel> result = await remoteDataSource.getPopularTvs();
+      final List<TvModel> result = await remoteDataSource.getPopularTvs(page);
       return Right<Failure, List<Tv>>(
         result.map((TvModel model) => model.toEntity()).toList(),
       );
@@ -41,9 +41,9 @@ class TvRepositoryImpl implements TvRepository {
   }
 
   @override
-  Future<Either<Failure, List<Tv>>> getTopRatedTvs() async {
+  Future<Either<Failure, List<Tv>>> getTopRatedTvs(int? page) async {
     try {
-      final List<TvModel> result = await remoteDataSource.getTopRatedTvs();
+      final List<TvModel> result = await remoteDataSource.getTopRatedTvs(page);
       return Right<Failure, List<Tv>>(
         result.map((TvModel model) => model.toEntity()).toList(),
       );

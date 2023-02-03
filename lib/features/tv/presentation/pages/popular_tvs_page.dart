@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
+import 'package:mock_bloc_stream/core/extension/extension.dart';
 import 'package:mock_bloc_stream/features/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/popular_tvs_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/widgets/item_card_list.dart';
@@ -17,6 +18,8 @@ class PopularTvsPage extends StatefulWidget {
 
 class _PopularTvsPageState extends State<PopularTvsPage> {
   late PopularTvsBloc _bloc;
+  late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
@@ -24,8 +27,15 @@ class _PopularTvsPageState extends State<PopularTvsPage> {
 
   @override
   void didChangeDependencies() {
-    _bloc = BlocProvider.of<PopularTvsBloc>(context);
-    Future<void>.microtask(() => _bloc.fetchPopularTvs());
+    _bloc = BlocProvider.of<PopularTvsBloc>(context)..loadTvs(LoadType.load);
+
+    _scrollController = ScrollController()
+      ..addListener(() {
+        if (_scrollController.position.pixels + 100 >=
+            _scrollController.position.maxScrollExtent) {
+          _bloc.loadTvs(LoadType.load);
+        }
+      });
 
     super.didChangeDependencies();
   }
@@ -33,6 +43,7 @@ class _PopularTvsPageState extends State<PopularTvsPage> {
   @override
   void dispose() {
     _bloc.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -47,45 +58,54 @@ class _PopularTvsPageState extends State<PopularTvsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: RequiredStreamBuilder<RequestState>(
-          stream: _bloc.state,
+        child: RequiredStreamBuilder<TupleEx2<List<Tv>, RequestState>>(
+          stream: _bloc.tupleStream,
           builder: (
             BuildContext context,
-            AsyncSnapshot<RequestState> snap1,
+            AsyncSnapshot<TupleEx2<List<Tv>, RequestState>> asyncSnapshot,
           ) {
-            if (snap1.data == RequestState.loading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snap1.data == RequestState.loaded) {
-              return RequiredStreamBuilder<List<Tv>>(
-                stream: _bloc.tvs,
-                builder: (__, AsyncSnapshot<List<Tv>> snap2) {
-                  if (!snap2.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return FadeInUp(
-                    from: 20,
-                    duration: const Duration(milliseconds: 500),
-                    child: ListView.builder(
-                      key: const Key('popularTvsListView'),
-                      itemCount: snap2.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final Tv tv = snap2.data![index];
-                        return ItemCard(tv: tv);
-                      },
-                    ),
-                  );
-                },
-              );
-            } else {
-              return const Center(
-                key: Key('error_message'),
-                child: Text('Cannot get popular tvs'),
-              );
+            if (!asyncSnapshot.hasData) {
+              return const SizedBox();
             }
+            final TupleEx2<List<Tv>, RequestState>? data = asyncSnapshot.data;
+            List<Tv> tvs = data?.value1 ?? <Tv>[];
+            return FadeInUp(
+              from: 20,
+              duration: const Duration(milliseconds: 500),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  _bloc.loadTvs(LoadType.refresh);
+                },
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (data == null) {
+                      return const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    return index < tvs.length
+                        ? ItemCard(
+                            tv: tvs[index],
+                          )
+                        : const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                  },
+                  itemCount: data == null
+                      ? 1
+                      : data.value2 == RequestState.loading
+                          ? tvs.length + 1
+                          : tvs.length,
+                ),
+              ),
+            );
           },
         ),
       ),

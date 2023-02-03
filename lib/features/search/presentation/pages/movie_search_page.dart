@@ -23,7 +23,6 @@ class MovieSearchPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextField(
-              key: const Key('enterMovieQuery'),
               onChanged: (String query) {
                 BlocProvider.of<MovieSearchBloc>(context)
                     .add(OnQueryChanged(query));
