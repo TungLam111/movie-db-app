@@ -1,9 +1,8 @@
-import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/core/extension/extension.dart';
 import 'package:mock_bloc_stream/features/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/features/tv/domain/usecases/get_watchlist_tvs_usecase.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -28,30 +27,24 @@ class WatchlistTvBloc extends BaseBloc {
                 .doOnListen(() => stateSubject.add(RequestState.loading))
                 .doOnError((_, __) {
               stateSubject.add(RequestState.error);
-            }).doOnData((Either<Failure, List<Tv>> event) {
-              event.fold(
-                (Failure failure) {
-                  stateSubject.add(RequestState.error);
-                },
-                (List<Tv> moviesData) {
-                  stateSubject.add(RequestState.loaded);
-                },
-              );
+            }).doOnData((DataState<List<Tv>> event) {
+              if (event.isError()) {
+                stateSubject.add(RequestState.error);
+              } else {
+                stateSubject.add(RequestState.loaded);
+              }
             }),
           )
           .scan(
         (
           Object accumulated,
-          Either<Failure, List<Tv>> value,
+          DataState<List<Tv>> value,
           int index,
         ) {
           List<Tv> temp = <Tv>[];
-          value.fold(
-            (Failure failure) {},
-            (List<Tv> tvsData) {
-              temp = tvsData;
-            },
-          );
+          if (value.isSuccess()) {
+            temp = value.data!;
+          }
           if (accumulated is List) {
             return <Tv>[...(accumulated as List<Tv>), ...temp];
           }
@@ -65,7 +58,7 @@ class WatchlistTvBloc extends BaseBloc {
       ),
       stateSubject.stream,
       (Object v1, RequestState v2) =>
-          Tuple2<List<Tv>, RequestState>(v1 as List<Tv>, v2),
+          TupleEx2<List<Tv>, RequestState>(v1 as List<Tv>, v2),
     ).share();
 
     return WatchlistTvBloc._(
@@ -84,7 +77,7 @@ class WatchlistTvBloc extends BaseBloc {
   });
 
   final Stream<TupleEx2<List<Tv>, RequestState>> tupleStream;
-  final Function0 loadTvs;
+  final FunctionEx0 loadTvs;
   final void Function() whatToDispose;
 
   @override

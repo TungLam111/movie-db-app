@@ -1,6 +1,5 @@
-import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -32,13 +31,11 @@ class TvDetailBloc extends BaseBloc {
 
   final BehaviorSubject<RequestState> _tvStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
-  Stream<RequestState> get tvStateStream =>
-      _tvStateSubject.stream;
+  Stream<RequestState> get tvStateStream => _tvStateSubject.stream;
 
   final BehaviorSubject<List<Tv>> _recommendationsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
-  Stream<List<Tv>> get recommendationsStream =>
-      _recommendationsSubject.stream;
+  Stream<List<Tv>> get recommendationsStream => _recommendationsSubject.stream;
 
   final BehaviorSubject<RequestState> _recommendationsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
@@ -54,62 +51,46 @@ class TvDetailBloc extends BaseBloc {
   Future<void> fetchTvDetail(int id) async {
     _tvStateSubject.add(RequestState.loading);
 
-    final Either<Failure, TvDetail> detailResult =
+    final DataState<TvDetail> detailResult =
         await getTvDetailUsecase.execute(id);
-    final Either<Failure, List<Tv>> recommendationsResult =
+    final DataState<List<Tv>> recommendationsResult =
         await getTvRecommendationsUsecase.execute(id);
 
-    detailResult.fold(
-      (Failure failure) {
-        _tvStateSubject.add(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (TvDetail tv) {
-        _recommendationsStateSubject.add(RequestState.loading);
-        _tvStateSubject.add(RequestState.loaded);
-        _tvSubject.add(tv);
-        recommendationsResult.fold(
-          (Failure failure) {
-            _recommendationsStateSubject.add(RequestState.error);
-            messageSubject.add(failure.message);
-          },
-          (List<Tv> tvs) {
-            _recommendationsStateSubject.add(RequestState.loaded);
-            _recommendationsSubject.add(tvs);
-          },
-        );
-      },
-    );
+    if (detailResult.isError()) {
+      _tvStateSubject.add(RequestState.error);
+      messageSubject.add(detailResult.err);
+    } else {
+      _recommendationsStateSubject.add(RequestState.loading);
+      _tvStateSubject.add(RequestState.loaded);
+      _tvSubject.add(detailResult.data);
+      if (recommendationsResult.isError()) {
+        _recommendationsStateSubject.add(RequestState.error);
+        messageSubject.add(recommendationsResult.err);
+      } else {
+        _recommendationsStateSubject.add(RequestState.loaded);
+        _recommendationsSubject.add(recommendationsResult.data!);
+      }
+    }
   }
 
   Future<void> addToWatchlist(TvDetail tv) async {
-    final Either<Failure, String> result =
-        await saveWatchlistUsecase.execute(tv);
-
-    await result.fold(
-      (Failure failure) async {
-        messageSubject.add(failure.message);
-      },
-      (String successMessage) async {
-        messageSubject.add(successMessage);
-      },
-    );
-
+    final DataState<String> result = await saveWatchlistUsecase.execute(tv);
+    if (result.isError()) {
+      messageSubject.add(result.err);
+    } else {
+      messageSubject.add(result.data!);
+    }
     await loadWatchlistStatus(tv.id);
   }
 
   Future<void> removeFromWatchlist(TvDetail tv) async {
-    final Either<Failure, String> result =
-        await removeWatchlistUsecase.execute(tv);
+    final DataState<String> result = await removeWatchlistUsecase.execute(tv);
 
-    await result.fold(
-      (Failure failure) async {
-        messageSubject.add(failure.message);
-      },
-      (String successMessage) async {
-        messageSubject.add(successMessage);
-      },
-    );
+    if (result.isError()) {
+      messageSubject.add(result.err);
+    } else {
+      messageSubject.add(result.data!);
+    }
 
     await loadWatchlistStatus(tv.id);
   }

@@ -1,7 +1,6 @@
-import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/core/extension/extension.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
@@ -37,30 +36,24 @@ class TopRatedMoviesBloc extends BaseBloc {
                     .doOnListen(() => stateSubject.add(RequestState.loading))
                     .doOnError((_, __) {
               stateSubject.add(RequestState.error);
-            }).doOnData((Either<Failure, List<Movie>> event) {
-              event.fold(
-                (Failure failure) {
-                  stateSubject.add(RequestState.error);
-                },
-                (List<Movie> moviesData) {
-                  stateSubject.add(RequestState.loaded);
-                },
-              );
+            }).doOnData((DataState<List<Movie>> event) {
+              if (event.isError()) {
+                stateSubject.add(RequestState.error);
+              } else {
+                stateSubject.add(RequestState.loaded);
+              }
             }),
           )
           .scan(
         (
           Object accumulated,
-          Either<Failure, List<Movie>> value,
+          DataState<List<Movie>> value,
           int index,
         ) {
           List<Movie> temp = <Movie>[];
-          value.fold(
-            (Failure failure) {},
-            (List<Movie> moviesData) {
-              temp = moviesData;
-            },
-          );
+          if (value.isSuccess()) {
+            temp = value.data!;
+          }
           if (accumulated is List) {
             return <Movie>[...(accumulated as List<Movie>), ...temp];
           }
@@ -75,7 +68,7 @@ class TopRatedMoviesBloc extends BaseBloc {
       ),
       stateSubject.stream,
       (Object v1, RequestState v2) =>
-          Tuple2<List<Movie>, RequestState>(v1 as List<Movie>, v2),
+          TupleEx2<List<Movie>, RequestState>(v1 as List<Movie>, v2),
     ).share();
 
     return TopRatedMoviesBloc._(
@@ -89,7 +82,7 @@ class TopRatedMoviesBloc extends BaseBloc {
   }
 
   final Stream<TupleEx2<List<Movie>, RequestState>> tupleStream;
-  final Function0 loadMovies;
+  final FunctionEx0 loadMovies;
   final void Function() whatToDispose;
 
   @override

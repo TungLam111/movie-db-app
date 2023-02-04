@@ -1,6 +1,6 @@
-import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
+import 'package:mock_bloc_stream/core/extension/extension.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -85,23 +85,23 @@ class MovieListBloc extends BaseBloc {
 
   final void Function() whatToDispose;
 
-  final Function1<List<Movie>, void> addNowPlayingMovies;
+  final FunctionEx1<List<Movie>, void> addNowPlayingMovies;
   final Stream<List<Movie>> nowPlayingMoviesStream;
-  final Function0<List<Movie>> nowPlayingMoviesF;
+  final FunctionEx0<List<Movie>> nowPlayingMoviesF;
 
-  final Function1<RequestState, void> addNowPlayingState;
+  final FunctionEx1<RequestState, void> addNowPlayingState;
   final Stream<RequestState> nowPlayingStateStream;
 
-  final Function1<List<Movie>, void> addPopularMovies;
+  final FunctionEx1<List<Movie>, void> addPopularMovies;
   Stream<List<Movie>> popularMoviesStream;
 
-  final Function1<RequestState, void> addPopularMoviesState;
+  final FunctionEx1<RequestState, void> addPopularMoviesState;
   Stream<RequestState> popularMoviesStateStream;
 
-  final Function1<List<Movie>, void> addTopRatedMovies;
+  final FunctionEx1<List<Movie>, void> addTopRatedMovies;
   Stream<List<Movie>> topRatedMoviesStream;
 
-  final Function1<RequestState, void> addTopRatedMoviesState;
+  final FunctionEx1<RequestState, void> addTopRatedMoviesState;
   Stream<RequestState> topRatedMoviesStateStream;
 
   final GetNowPlayingMoviesUsecase getNowPlayingMoviesUsecase;
@@ -111,52 +111,44 @@ class MovieListBloc extends BaseBloc {
   Future<void> fetchNowPlayingMovies() async {
     addNowPlayingState(RequestState.loading);
 
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await getNowPlayingMoviesUsecase.execute();
-    result.fold(
-      (Failure failure) {
-        addNowPlayingState(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (List<Movie> moviesData) {
-        addNowPlayingState(RequestState.loaded);
-        addNowPlayingMovies.call(moviesData);
-      },
-    );
+
+    if (result.isError()) {
+      addNowPlayingState(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      addNowPlayingState(RequestState.loaded);
+      addNowPlayingMovies.call(result.data!);
+    }
   }
 
   Future<void> fetchPopularMovies() async {
     addPopularMoviesState(RequestState.loading);
 
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await getPopularMoviesUsecase.execute(1);
-    result.fold(
-      (Failure failure) {
-        addPopularMoviesState(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (List<Movie> moviesData) {
-        addPopularMoviesState(RequestState.loaded);
-        addPopularMovies(moviesData);
-      },
-    );
+    if (result.isError()) {
+      addPopularMoviesState(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      addPopularMoviesState(RequestState.loaded);
+      addPopularMovies(result.data!);
+    }
   }
 
   Future<void> fetchTopRatedMovies() async {
     addTopRatedMoviesState(RequestState.loading);
 
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await getTopRatedMoviesUsecase.execute(null);
-    result.fold(
-      (Failure failure) {
-        addTopRatedMoviesState(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (List<Movie> moviesData) {
-        addTopRatedMoviesState(RequestState.loaded);
-        addTopRatedMovies(moviesData);
-      },
-    );
+    if (result.isError()) {
+      addTopRatedMoviesState(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      addTopRatedMoviesState(RequestState.loaded);
+      addTopRatedMovies(result.data!);
+    }
   }
 
   @override

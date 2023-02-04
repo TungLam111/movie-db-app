@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mock_bloc_stream/features/about/about_page.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
 import 'package:mock_bloc_stream/core/base/app_bloc.dart';
 import 'package:mock_bloc_stream/features/home/bloc/home_bloc.dart';
@@ -163,27 +162,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                               ),
+                              ListTile(
+                                onTap: () {
+                                  _homeBloc
+                                      .setState(GeneralContentType.watchlist);
+                                  toggle();
+                                },
+                                leading: const Icon(Icons.save_alt),
+                                title: const Text('Watchlist'),
+                                iconColor: Colors.white70,
+                                textColor: Colors.white70,
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  _homeBloc.setState(GeneralContentType.about);
+                                  toggle();
+                                },
+                                leading: const Icon(Icons.info_outline),
+                                title: const Text('About'),
+                                iconColor: Colors.white70,
+                                textColor: Colors.white70,
+                              ),
                             ],
                           );
                         },
-                      ),
-                      ListTile(
-                        onTap: () {
-                          Navigator.pushNamed(context, WatchlistPage.routeName);
-                        },
-                        leading: const Icon(Icons.save_alt),
-                        title: const Text('Watchlist'),
-                        iconColor: Colors.white70,
-                        textColor: Colors.white70,
-                      ),
-                      ListTile(
-                        onTap: () {
-                          Navigator.pushNamed(context, AboutPage.routeName);
-                        },
-                        leading: const Icon(Icons.info_outline),
-                        title: const Text('About'),
-                        iconColor: Colors.white70,
-                        textColor: Colors.white70,
                       ),
                     ],
                   ),
@@ -257,8 +259,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               final GeneralContentType state = sns.data!;
                               if (state == GeneralContentType.movie) {
                                 return const MainMoviePage();
-                              } else {
+                              } else if (state == GeneralContentType.tv) {
                                 return const MainTvPage();
+                              } else if (state ==
+                                  GeneralContentType.watchlist) {
+                                return const WatchlistPage();
+                              } else {
+                                return const Scaffold();
                               }
                             },
                           ),

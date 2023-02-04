@@ -1,25 +1,45 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
+import 'package:mock_bloc_stream/core/config/env/logger_config.dart';
 import 'package:mock_bloc_stream/features/home/bar.dart';
 import 'package:mock_bloc_stream/features/home/bottom.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/watchlist_movie/watchlist_movie_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/pages/movie_watchlist_page.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/watchlist_tv_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/pages/tv_watchlist_page.dart';
+import 'package:mock_bloc_stream/injection/di_locator.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 
-class WatchlistPage extends StatefulWidget {
-  const WatchlistPage({Key? key}) : super(key: key);
-  static const String routeName = '/watchlist';
+class WatchlistPage extends StatelessWidget {
+  const WatchlistPage({super.key});
 
   @override
-  State<WatchlistPage> createState() => _WatchlistPageState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: <BlocProvider<BaseBloc>>[
+        BlocProvider<WatchlistMovieBloc>(
+          bloc: locator<WatchlistMovieBloc>(),
+        ),
+        BlocProvider<WatchlistTvBloc>(
+          bloc: locator<WatchlistTvBloc>(),
+        ),
+      ],
+      child: const _WatchlistPage(),
+    );
+  }
 }
 
-class _WatchlistPageState extends State<WatchlistPage>
-    with RouteAware, SingleTickerProviderStateMixin<WatchlistPage> {
+class _WatchlistPage extends StatefulWidget {
+  const _WatchlistPage({Key? key}) : super(key: key);
+  @override
+  State<_WatchlistPage> createState() => _WatchlistPageState();
+}
+
+class _WatchlistPageState extends State<_WatchlistPage>
+    with RouteAware, SingleTickerProviderStateMixin<_WatchlistPage> {
   late WatchlistMovieBloc _movieBloc;
   late WatchlistTvBloc _tvBloc;
   ValueNotifier<int> valueTabView = ValueNotifier<int>(0);
@@ -67,6 +87,7 @@ class _WatchlistPageState extends State<WatchlistPage>
 
   @override
   Widget build(BuildContext context) {
+    logg('rebuild --- watchlist');
     return Scaffold(
       appBar: AppBar(title: const Text('Watchlist')),
       body: OBCupertinoTabScaffold(

@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:dartz/dartz.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/features/movie/data/models/movie_model.dart';
 import 'package:mock_bloc_stream/features/movie/data/models/movie_detail_response.dart';
 import 'package:mock_bloc_stream/features/movie/data/models/media_movie_image_model.dart';
@@ -23,141 +22,141 @@ class MovieRepositoryImpl implements MovieRepository {
   final MovieLocalDataSource localDataSource;
 
   @override
-  Future<Either<Failure, List<Movie>>> getNowPlayingMovies() async {
+  Future<DataState<List<Movie>>> getNowPlayingMovies() async {
     try {
       final List<MovieModel> result =
           await remoteDataSource.getNowPlayingMovies();
-      return Right<Failure, List<Movie>>(
+      return DataSuccess<List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
     } on ServerException {
-      return const Left<Failure, List<Movie>>(ServerFailure(''));
+      return DataFailed<List<Movie>>(ServerException());
     } on SocketException {
-      return const Left<Failure, List<Movie>>(
-        ConnectionFailure('Failed to connect to the network'),
+      return const DataFailed<List<Movie>>(
+        SocketException('Failed to connect to the network'),
       );
     }
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getPopularMovies(int? page) async {
+  Future<DataState<List<Movie>>> getPopularMovies(int? page) async {
     try {
       final List<MovieModel> result =
           await remoteDataSource.getPopularMovies(page);
-      return Right<Failure, List<Movie>>(
+      return DataSuccess<List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
     } on ServerException {
-      return const Left<Failure, List<Movie>>(ServerFailure(''));
+      return DataFailed<List<Movie>>(ServerException());
     } on SocketException {
-      return const Left<Failure, List<Movie>>(
-        ConnectionFailure('Failed to connect to the network'),
+      return const DataFailed<List<Movie>>(
+        SocketException('Failed to connect to the network'),
       );
     }
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getTopRatedMovies(int? page) async {
+  Future<DataState<List<Movie>>> getTopRatedMovies(int? page) async {
     try {
       final List<MovieModel> result =
           await remoteDataSource.getTopRatedMovies(page);
-      return Right<Failure, List<Movie>>(
+      return DataSuccess<List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
     } on ServerException {
-      return const Left<Failure, List<Movie>>(ServerFailure(''));
+      return DataFailed<List<Movie>>(ServerException());
     } on SocketException {
-      return const Left<Failure, List<Movie>>(
-        ConnectionFailure('Failed to connect to the network'),
+      return const DataFailed<List<Movie>>(
+        SocketException('Failed to connect to the network'),
       );
     }
   }
 
   @override
-  Future<Either<Failure, MovieDetail>> getMovieDetail(int id) async {
+  Future<DataState<MovieDetail>> getMovieDetail(int id) async {
     try {
       final MovieDetailResponse result =
           await remoteDataSource.getMovieDetail(id);
-      return Right<Failure, MovieDetail>(result.toEntity());
+      return DataSuccess<MovieDetail>(result.toEntity());
     } on ServerException {
-      return const Left<Failure, MovieDetail>(ServerFailure(''));
+      return DataFailed<MovieDetail>(ServerException());
     } on SocketException {
-      return const Left<Failure, MovieDetail>(
-        ConnectionFailure('Failed to connect to the network'),
+      return const DataFailed<MovieDetail>(
+        SocketException('Failed to connect to the network'),
       );
     }
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getMovieRecommendations(int id) async {
+  Future<DataState<List<Movie>>> getMovieRecommendations(int id) async {
     try {
       final List<MovieModel> result =
           await remoteDataSource.getMovieRecommendations(id);
-      return Right<Failure, List<Movie>>(
+      return DataSuccess<List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
     } on ServerException {
-      return const Left<Failure, List<Movie>>(ServerFailure(''));
+      return DataFailed<List<Movie>>(ServerException());
     } on SocketException {
-      return const Left<Failure, List<Movie>>(
-        ConnectionFailure('Failed to connect to the network'),
+      return const DataFailed<List<Movie>>(
+        SocketException('Failed to connect to the network'),
       );
     }
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> searchMovies(String query) async {
+  Future<DataState<List<Movie>>> searchMovies(String query) async {
     try {
       final List<MovieModel> result =
           await remoteDataSource.searchMovies(query);
-      return Right<Failure, List<Movie>>(
+      return DataSuccess<List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
     } on ServerException {
-      return const Left<Failure, List<Movie>>(ServerFailure(''));
+      return DataFailed<List<Movie>>(ServerException());
     } on SocketException {
-      return const Left<Failure, List<Movie>>(
-        ConnectionFailure('Failed to connect to the network'),
+      return const DataFailed<List<Movie>>(
+        SocketException('Failed to connect to the network'),
       );
     }
   }
 
   @override
-  Future<Either<Failure, MediaImage>> getMovieImages(int id) async {
+  Future<DataState<MediaImage>> getMovieImages(int id) async {
     try {
       final MediaMovieImageModel result =
           await remoteDataSource.getMovieImages(id);
-      return Right<Failure, MediaImage>(result.toEntity());
+      return DataSuccess<MediaImage>(result.toEntity());
     } on ServerException {
-      return const Left<Failure, MediaImage>(ServerFailure(''));
+      return DataFailed<MediaImage>(ServerException());
     } on SocketException {
-      return const Left<Failure, MediaImage>(
-        ConnectionFailure('Failed to connect to the network'),
+      return const DataFailed<MediaImage>(
+        SocketException('Failed to connect to the network'),
       );
     }
   }
 
   @override
-  Future<Either<Failure, String>> saveWatchlist(MovieDetail movie) async {
+  Future<DataState<String>> saveWatchlist(MovieDetail movie) async {
     try {
       final String result =
           await localDataSource.insertWatchlist(MovieTable.fromEntity(movie));
-      return Right<Failure, String>(result);
+      return DataSuccess<String>(result);
     } on DatabaseException catch (e) {
-      return Left<Failure, String>(DatabaseFailure(e.message));
+      return DataFailed<String>(DatabaseException(e.message));
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, String>> removeWatchlist(MovieDetail movie) async {
+  Future<DataState<String>> removeWatchlist(MovieDetail movie) async {
     try {
       final String result =
           await localDataSource.removeWatchlist(MovieTable.fromEntity(movie));
-      return Right<Failure, String>(result);
+      return DataSuccess<String>(result);
     } on DatabaseException catch (e) {
-      return Left<Failure, String>(DatabaseFailure(e.message));
+      return DataFailed<String>(DatabaseException(e.message));
     }
   }
 
@@ -168,10 +167,10 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<Either<Failure, List<Movie>>> getWatchlistMovies(int? page) async {
+  Future<DataState<List<Movie>>> getWatchlistMovies(int? page) async {
     final List<MovieTable> result =
         await localDataSource.getWatchlistMovies(page);
-    return Right<Failure, List<Movie>>(
+    return DataSuccess<List<Movie>>(
       result.map((MovieTable data) => data.toEntity()).toList(),
     );
   }

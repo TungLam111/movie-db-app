@@ -1,14 +1,12 @@
 import 'dart:developer';
-
-import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/features/auth/data/models/request_token_response.dart';
 import 'package:mock_bloc_stream/features/auth/data/models/session_with_login.dart';
 import 'package:mock_bloc_stream/features/auth/domain/usecases/auth_usecase.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/core/service/user/shared_pref_service.dart';
 import 'package:mock_bloc_stream/injection/di_locator.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -23,8 +21,7 @@ class AuthBloc extends BaseBloc {
 
   final BehaviorSubject<RequestState> _loginStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
-  Stream<RequestState> get loginStateStream =>
-      _loginStateSubject.stream;
+  Stream<RequestState> get loginStateStream => _loginStateSubject.stream;
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -43,37 +40,31 @@ class AuthBloc extends BaseBloc {
 
   Future<void> createSessionWithLogin() async {
     _loginStateSubject.add(RequestState.loading);
-    final Either<Failure, RequestTokenResponse> tokenResult =
+    final DataState<RequestTokenResponse> tokenResult =
         await loginUsecase.createRequestToken();
-    tokenResult.fold(
-      (Failure failure) {
-        _loginStateSubject.add(RequestState.error);
-        messageSubject.add('Can not create request token');
-        return Future<void>.value();
-      },
-      (RequestTokenResponse data) async {
-        log(data.requestToken!);
-        await locator<SharedPreferenceService>()
-            .setUserToken(data.requestToken!);
-      },
-    );
+    if (tokenResult.isError()) {
+      _loginStateSubject.add(RequestState.error);
+      messageSubject.add('Can not create request token');
+      return Future<void>.value();
+    } else {
+      log(tokenResult.data!.requestToken!);
+      await locator<SharedPreferenceService>()
+          .setUserToken(tokenResult.data!.requestToken!);
+    }
 
-    final Either<Failure, SessionWithLoginResponse> result =
+    final DataState<SessionWithLoginResponse> result =
         await loginUsecase.createSessionWithLogin(
       username: _usernameController.text,
       password: _passwordController.text,
       requestToken: locator<SharedPreferenceService>().getUserToken()!,
     );
 
-    result.fold(
-      (Failure failure) {
-        _loginStateSubject.add(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (SessionWithLoginResponse data) {
-        _loginStateSubject.add(RequestState.loaded);
-      },
-    );
+    if (result.isError()) {
+      _loginStateSubject.add(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      _loginStateSubject.add(RequestState.loaded);
+    }
   }
 
   @override

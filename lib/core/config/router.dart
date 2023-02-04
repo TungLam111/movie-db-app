@@ -3,15 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
-import 'package:mock_bloc_stream/features/about/about_page.dart';
 import 'package:mock_bloc_stream/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mock_bloc_stream/features/auth/presentation/pages/login_page.dart';
 import 'package:mock_bloc_stream/features/home/home_page.dart';
-import 'package:mock_bloc_stream/features/home/watchlist_page.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_detail/movie_detail_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/popular_movies/popular_movies_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/top_rated_movies/top_rated_movies_bloc.dart';
-import 'package:mock_bloc_stream/features/movie/presentation/bloc/watchlist_movie/watchlist_movie_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/pages/movie_detail_page.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/pages/popular_movies_page.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/pages/top_rated_movies_page.dart';
@@ -22,7 +19,6 @@ import 'package:mock_bloc_stream/features/tv/presentation/bloc/popular_tvs_bloc.
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/top_rated_tvs_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_detail_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_season_episodes_bloc.dart';
-import 'package:mock_bloc_stream/features/tv/presentation/bloc/watchlist_tv_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/pages/popular_tvs_page.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/pages/top_rated_tvs_page.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/pages/tv_detail_page.dart';
@@ -121,27 +117,6 @@ class AppRouter {
             child: const TvSearchPage(),
           ),
         );
-
-      case WatchlistPage.routeName:
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => MultiBlocProvider(
-            providers: <BlocProvider<BaseBloc>>[
-              BlocProvider<WatchlistMovieBloc>(
-                bloc: locator<WatchlistMovieBloc>(),
-              ),
-              BlocProvider<WatchlistTvBloc>(
-                bloc: locator<WatchlistTvBloc>(),
-              ),
-            ],
-            child: const WatchlistPage(),
-          ),
-        );
-
-      case AboutPage.routeName:
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => const AboutPage(),
-        );
-
       default:
         return _errorRoute();
     }

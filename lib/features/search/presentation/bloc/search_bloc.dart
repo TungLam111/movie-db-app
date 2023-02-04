@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
 import 'package:mock_bloc_stream/features/search/presentation/bloc/search_state.dart';
 import 'package:mock_bloc_stream/features/tv/domain/entities/tv.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../domain/usecases/search_movies_usecase.dart';
@@ -53,29 +52,26 @@ class MovieSearchBloc extends BaseBloc {
         (SearchStateBuilder p0) => p0..searchMovieState = RequestState.loading,
       ),
     );
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await _searchMoviesUsecase.execute(event.query);
 
-    result.fold(
-      (Failure failure) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (SearchStateBuilder p0) => p0
-              ..msgMovie = failure.message
-              ..searchMovieState = RequestState.error,
-          ),
-        );
-      },
-      (List<Movie> data) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (SearchStateBuilder p0) => p0
-              ..movies = data
-              ..searchMovieState = RequestState.loaded,
-          ),
-        );
-      },
-    );
+    if (result.isError()) {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (SearchStateBuilder p0) => p0
+            ..msgMovie = result.err
+            ..searchMovieState = RequestState.error,
+        ),
+      );
+    } else {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (SearchStateBuilder p0) => p0
+            ..movies = result.data
+            ..searchMovieState = RequestState.loaded,
+        ),
+      );
+    }
   }
 
   @override
@@ -122,29 +118,26 @@ class TvSearchBloc extends BaseBloc {
         (SearchStateBuilder p0) => p0..searchTvState = RequestState.loading,
       ),
     );
-    final Either<Failure, List<Tv>> result =
+    final DataState<List<Tv>> result =
         await _searchTvsUsecase.execute(event.query);
 
-    result.fold(
-      (Failure failure) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (SearchStateBuilder p0) => p0
-              ..searchTvState = RequestState.error
-              ..msgTv = failure.message,
-          ),
-        );
-      },
-      (List<Tv> data) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (SearchStateBuilder p0) => p0
-              ..searchTvState = RequestState.loaded
-              ..tvs = data,
-          ),
-        );
-      },
-    );
+    if (result.isError()) {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (SearchStateBuilder p0) => p0
+            ..searchTvState = RequestState.error
+            ..msgTv = result.err,
+        ),
+      );
+    } else {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (SearchStateBuilder p0) => p0
+            ..searchTvState = RequestState.loaded
+            ..tvs = result.data,
+        ),
+      );
+    }
   }
 
   final SearchTvsUsecase _searchTvsUsecase;

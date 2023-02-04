@@ -1,6 +1,5 @@
-import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -17,8 +16,7 @@ class TvListBloc extends BaseBloc {
   });
   final BehaviorSubject<List<Tv>> _onTheAirTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
-  Stream<List<Tv>> get onTheAirTvsStream =>
-      _onTheAirTvsSubject.stream;
+  Stream<List<Tv>> get onTheAirTvsStream => _onTheAirTvsSubject.stream;
   List<Tv> get onTheAirTvs => _onTheAirTvsSubject.value;
 
   final BehaviorSubject<RequestState> _onTheAirTvsStateSubject =
@@ -28,8 +26,7 @@ class TvListBloc extends BaseBloc {
 
   final BehaviorSubject<List<Tv>> _popularTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
-  Stream<List<Tv>> get popularTvsStream =>
-      _popularTvsSubject.stream;
+  Stream<List<Tv>> get popularTvsStream => _popularTvsSubject.stream;
 
   final BehaviorSubject<RequestState> _popularTvsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
@@ -38,8 +35,7 @@ class TvListBloc extends BaseBloc {
 
   final BehaviorSubject<List<Tv>> _topRatedTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
-  Stream<List<Tv>> get topRatedTvsStream =>
-      _topRatedTvsSubject.stream;
+  Stream<List<Tv>> get topRatedTvsStream => _topRatedTvsSubject.stream;
 
   final BehaviorSubject<RequestState> _topRatedTvsStateSubject =
       BehaviorSubject<RequestState>.seeded(RequestState.empty);
@@ -53,52 +49,40 @@ class TvListBloc extends BaseBloc {
   Future<void> fetchOnTheAirTvs() async {
     _onTheAirTvsStateSubject.add(RequestState.loading);
 
-    final Either<Failure, List<Tv>> result =
-        await getOnTheAirTvsUsecase.execute();
-    result.fold(
-      (Failure failure) {
-        _onTheAirTvsStateSubject.add(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (List<Tv> tvsData) {
-        _onTheAirTvsStateSubject.add(RequestState.loaded);
-        _onTheAirTvsSubject.add(tvsData);
-      },
-    );
+    final DataState<List<Tv>> result = await getOnTheAirTvsUsecase.execute();
+    if (result.isError()) {
+      _onTheAirTvsStateSubject.add(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      _onTheAirTvsStateSubject.add(RequestState.loaded);
+      _onTheAirTvsSubject.add(result.data!);
+    }
   }
 
   Future<void> fetchPopularTvs() async {
     _popularTvsStateSubject.add(RequestState.loading);
 
-    final Either<Failure, List<Tv>> result =
-        await getPopularTvsUsecase.execute(1);
-    result.fold(
-      (Failure failure) {
-        _popularTvsStateSubject.add(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (List<Tv> tvsData) {
-        _popularTvsStateSubject.add(RequestState.loaded);
-        _popularTvsSubject.add(tvsData);
-      },
-    );
+    final DataState<List<Tv>> result = await getPopularTvsUsecase.execute(1);
+    if (result.isError()) {
+      _popularTvsStateSubject.add(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      _popularTvsStateSubject.add(RequestState.loaded);
+      _popularTvsSubject.add(result.data!);
+    }
   }
 
   Future<void> fetchTopRatedTvs() async {
     _topRatedTvsStateSubject.add(RequestState.loading);
 
-    final Either<Failure, List<Tv>> result =
-        await getTopRatedTvsUsecase.execute(1);
-    result.fold(
-      (Failure failure) {
-        _topRatedTvsStateSubject.add(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (List<Tv> tvsData) {
-        _topRatedTvsStateSubject.add(RequestState.loaded);
-        _topRatedTvsSubject.add(tvsData);
-      },
-    );
+    final DataState<List<Tv>> result = await getTopRatedTvsUsecase.execute(1);
+    if (result.isError()) {
+      _topRatedTvsStateSubject.add(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      _topRatedTvsStateSubject.add(RequestState.loaded);
+      _topRatedTvsSubject.add(result.data!);
+    }
   }
 
   @override

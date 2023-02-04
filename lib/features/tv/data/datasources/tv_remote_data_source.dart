@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:mock_bloc_stream/core/api/api_service.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 
-import '../models/media_tv_image_model.dart';
-import '../models/tv_detail_response.dart';
-import '../models/tv_model.dart';
-import '../models/tv_response.dart';
-import '../models/tv_season_episode_model.dart';
-import '../models/tv_season_episode_response.dart';
+import 'package:mock_bloc_stream/features/tv/data/models/media_tv_image_model.dart';
+import 'package:mock_bloc_stream/features/tv/data/models/tv_detail_response.dart';
+import 'package:mock_bloc_stream/features/tv/data/models/tv_model.dart';
+import 'package:mock_bloc_stream/features/tv/data/models/tv_response.dart';
+import 'package:mock_bloc_stream/features/tv/data/models/tv_season_episode_model.dart';
+import 'package:mock_bloc_stream/features/tv/data/models/tv_season_episode_response.dart';
 
 abstract class TvRemoteDataSource {
   Future<List<TvModel>> getOnTheAirTvs();

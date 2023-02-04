@@ -1,6 +1,5 @@
-import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,8 +12,7 @@ class MovieImagesBloc extends BaseBloc {
 
   final BehaviorSubject<MediaImage?> _movieImagesSubject =
       BehaviorSubject<MediaImage?>.seeded(null);
-  Stream<MediaImage?> get getMediaImageStream =>
-      _movieImagesSubject.stream;
+  Stream<MediaImage?> get getMediaImageStream => _movieImagesSubject.stream;
   MediaImage? get movieImages => _movieImagesSubject.value;
 
   final BehaviorSubject<RequestState> _movieImagesStateSubject =
@@ -26,18 +24,15 @@ class MovieImagesBloc extends BaseBloc {
   Future<void> fetchMovieImages(int id) async {
     _movieImagesStateSubject.add(RequestState.loading);
 
-    final Either<Failure, MediaImage> result =
+    final DataState<MediaImage> result =
         await getMovieImagesUsecase.execute(id);
-    result.fold(
-      (Failure failure) {
-        _movieImagesStateSubject.add(RequestState.error);
-        messageSubject.add(failure.message);
-      },
-      (MediaImage movieImages) {
-        _movieImagesStateSubject.add(RequestState.loaded);
-        _movieImagesSubject.add(movieImages);
-      },
-    );
+    if (result.isError()) {
+      _movieImagesStateSubject.add(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      _movieImagesStateSubject.add(RequestState.loaded);
+      _movieImagesSubject.add(result.data);
+    }
   }
 
   @override

@@ -1,13 +1,10 @@
 import 'dart:async';
-
-import 'package:dartz/dartz.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_list/action_movie_list.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_list/state_movie_list.dart';
-import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
-
 import '../../../domain/entities/movie.dart';
 import '../../../domain/usecases/get_now_playing_movies_usecase.dart';
 import '../../../domain/usecases/get_popular_movies_usecase.dart';
@@ -18,7 +15,6 @@ class BlocMovieList extends BaseBloc {
     required this.getNowPlayingMoviesUsecase,
     required this.getPopularMoviesUsecase,
     required this.getTopRatedMoviesUsecase,
-    this.nowPlayingStream,
   }) {
     initActionListen();
   }
@@ -58,33 +54,26 @@ class BlocMovieList extends BaseBloc {
       ),
     );
 
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await getNowPlayingMoviesUsecase.execute();
-
-    result.fold(
-      (Failure failure) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) =>
-                p0..nowPlayingMoviesState = RequestState.error,
-          ),
-        );
-        messageSubject.add(failure.message);
-      },
-      (List<Movie> moviesData) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) => p0
-              ..nowPlayingMoviesState = RequestState.loaded
-              ..nowPlayingMovies = moviesData,
-          ),
-        );
-      },
-    );
+    if (result.isError()) {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) =>
+              p0..nowPlayingMoviesState = RequestState.error,
+        ),
+      );
+      messageSubject.add(result.err);
+    } else {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) => p0
+            ..nowPlayingMoviesState = RequestState.loaded
+            ..nowPlayingMovies = result.data,
+        ),
+      );
+    }
   }
-
-  // Data, Status, Message
-  final Stream<Tuple3<List<Movie>, RequestState, String>>? nowPlayingStream;
 
   // Use functional programming to operate on stream
   Future<void> onFetchNowPlayingMoviesFP(MovieListAction event) async {
@@ -95,29 +84,26 @@ class BlocMovieList extends BaseBloc {
       ),
     );
 
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await getNowPlayingMoviesUsecase.execute();
 
-    result.fold(
-      (Failure failure) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) =>
-                p0..nowPlayingMoviesState = RequestState.error,
-          ),
-        );
-        messageSubject.add(failure.message);
-      },
-      (List<Movie> moviesData) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) => p0
-              ..nowPlayingMoviesState = RequestState.loaded
-              ..nowPlayingMovies = moviesData,
-          ),
-        );
-      },
-    );
+    if (result.isError()) {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) =>
+              p0..nowPlayingMoviesState = RequestState.error,
+        ),
+      );
+      messageSubject.add(result.err);
+    } else {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) => p0
+            ..nowPlayingMoviesState = RequestState.loaded
+            ..nowPlayingMovies = result.data,
+        ),
+      );
+    }
   }
 
   Future<void> onFetchPopularMovies(MovieListAction event) async {
@@ -128,29 +114,25 @@ class BlocMovieList extends BaseBloc {
       ),
     );
 
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await getPopularMoviesUsecase.execute(1);
-
-    result.fold(
-      (Failure failure) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) =>
-                p0..popularMoviesState = RequestState.error,
-          ),
-        );
-        messageSubject.add(failure.message);
-      },
-      (List<Movie> moviesData) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) => p0
-              ..popularMoviesState = RequestState.loaded
-              ..popularMovies = moviesData,
-          ),
-        );
-      },
-    );
+    if (result.isError()) {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) =>
+              p0..popularMoviesState = RequestState.error,
+        ),
+      );
+      messageSubject.add(result.err);
+    } else {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) => p0
+            ..popularMoviesState = RequestState.loaded
+            ..popularMovies = result.data,
+        ),
+      );
+    }
   }
 
   Future<void> onFetchTopRatedMovies(MovieListAction event) async {
@@ -161,29 +143,25 @@ class BlocMovieList extends BaseBloc {
       ),
     );
 
-    final Either<Failure, List<Movie>> result =
+    final DataState<List<Movie>> result =
         await getTopRatedMoviesUsecase.execute(null);
-
-    result.fold(
-      (Failure failure) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) =>
-                p0..topRatedMoviesState = RequestState.error,
-          ),
-        );
-        messageSubject.add(failure.message);
-      },
-      (List<Movie> moviesData) {
-        _stateSubject.add(
-          _stateSubject.value.rebuild(
-            (MovieListStateBuilder p0) => p0
-              ..topRatedMoviesState = RequestState.loaded
-              ..topRatedMovies = moviesData,
-          ),
-        );
-      },
-    );
+    if (result.isError()) {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) =>
+              p0..topRatedMoviesState = RequestState.error,
+        ),
+      );
+      messageSubject.add(result.err);
+    } else {
+      _stateSubject.add(
+        _stateSubject.value.rebuild(
+          (MovieListStateBuilder p0) => p0
+            ..topRatedMoviesState = RequestState.loaded
+            ..topRatedMovies = result.data,
+        ),
+      );
+    }
   }
 
   @override

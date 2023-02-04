@@ -1,30 +1,31 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:equatable/equatable.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 
-abstract class Failure extends Equatable {
-  const Failure(this.message);
-  final String message;
+// abstract class Failure extends Equatable {
+//   const Failure(this.message);
+//   final String message;
 
-  @override
-  List<Object> get props => <Object>[message];
+//   @override
+//   List<Object> get props => <Object>[message];
+// }
+
+// class ServerFailure extends Failure {
+//   const ServerFailure(String message) : super(message);
+// }
+
+// class ConnectionFailure extends Failure {
+//   const ConnectionFailure(String message) : super(message);
+// }
+
+// class DatabaseFailure extends Failure {
+//   const DatabaseFailure(String message) : super(message);
+// }
+
+class ServerException implements Exception {
+  ServerException();
 }
-
-class ServerFailure extends Failure {
-  const ServerFailure(String message) : super(message);
-}
-
-class ConnectionFailure extends Failure {
-  const ConnectionFailure(String message) : super(message);
-}
-
-class DatabaseFailure extends Failure {
-  const DatabaseFailure(String message) : super(message);
-}
-
-class ServerException implements Exception {}
 
 class DatabaseException implements Exception {
   DatabaseException(this.message);

@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/features/tv/data/datasources/tv_local_data_source.dart';
 import 'package:mock_bloc_stream/features/tv/data/datasources/tv_remote_data_source.dart';
 import 'package:mock_bloc_stream/features/tv/data/models/media_tv_image_model.dart';
@@ -17,19 +17,19 @@ import 'dart:io';
 part '../../data/repositories/tv_repository_impl.dart';
 
 abstract class TvRepository {
-  Future<Either<Failure, List<Tv>>> getOnTheAirTvs();
-  Future<Either<Failure, List<Tv>>> getPopularTvs(int? page);
-  Future<Either<Failure, List<Tv>>> getTopRatedTvs(int? page);
-  Future<Either<Failure, TvDetail>> getTvDetail(int id);
-  Future<Either<Failure, List<Tv>>> getTvRecommendations(int id);
-  Future<Either<Failure, List<TvSeasonEpisode>>> getTvSeasonEpisodes(
+  Future<DataState<List<Tv>>> getOnTheAirTvs();
+  Future<DataState<List<Tv>>> getPopularTvs(int? page);
+  Future<DataState<List<Tv>>> getTopRatedTvs(int? page);
+  Future<DataState<TvDetail>> getTvDetail(int id);
+  Future<DataState<List<Tv>>> getTvRecommendations(int id);
+  Future<DataState<List<TvSeasonEpisode>>> getTvSeasonEpisodes(
     int id,
     int seasonNumber,
   );
-  Future<Either<Failure, List<Tv>>> searchTvs(String query);
-  Future<Either<Failure, MediaImage>> getTvImages(int id);
-  Future<Either<Failure, String>> saveWatchlist(TvDetail tv);
-  Future<Either<Failure, String>> removeWatchlist(TvDetail tv);
+  Future<DataState<List<Tv>>> searchTvs(String query);
+  Future<DataState<MediaImage>> getTvImages(int id);
+  Future<DataState<String>> saveWatchlist(TvDetail tv);
+  Future<DataState<String>> removeWatchlist(TvDetail tv);
   Future<bool> isAddedToWatchlist(int id);
-  Future<Either<Failure, List<Tv>>> getWatchlistTvs();
+  Future<DataState<List<Tv>>> getWatchlistTvs();
 }

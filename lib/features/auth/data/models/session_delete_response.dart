@@ -6,6 +6,5 @@ class SessionDeleteResponse extends Equatable {
     return const SessionDeleteResponse();
   }
   @override
-  // TODO: implement props
   List<Object?> get props => throw UnimplementedError();
 }
