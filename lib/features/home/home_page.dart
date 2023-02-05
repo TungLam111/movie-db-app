@@ -170,18 +170,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 },
                                 leading: const Icon(Icons.save_alt),
                                 title: const Text('Watchlist'),
+                                selected: snapshot.data ==
+                                    GeneralContentType.watchlist,
+                                style: ListTileStyle.drawer,
                                 iconColor: Colors.white70,
                                 textColor: Colors.white70,
-                              ),
-                              ListTile(
-                                onTap: () {
-                                  _homeBloc.setState(GeneralContentType.about);
-                                  toggle();
-                                },
-                                leading: const Icon(Icons.info_outline),
-                                title: const Text('About'),
-                                iconColor: Colors.white70,
-                                textColor: Colors.white70,
+                                selectedColor: Colors.white,
+                                selectedTileColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
                               ),
                             ],
                           );

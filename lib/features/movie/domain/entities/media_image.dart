@@ -1,3 +1,5 @@
+import 'package:mock_bloc_stream/features/movie/data/models/media_movie_image_model.dart';
+
 class MediaImage {
   const MediaImage({
     required this.id,
@@ -6,7 +8,7 @@ class MediaImage {
     required this.posterPaths,
   });
   final int id;
-  final List<String> backdropPaths;
-  final List<String> logoPaths;
-  final List<String> posterPaths;
+  final List<BackDrop>? backdropPaths;
+  final List<Logo>? logoPaths;
+  final List<Poster>? posterPaths;
 }

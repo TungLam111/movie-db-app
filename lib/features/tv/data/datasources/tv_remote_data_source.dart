@@ -11,16 +11,16 @@ import 'package:mock_bloc_stream/features/tv/data/models/tv_season_episode_model
 import 'package:mock_bloc_stream/features/tv/data/models/tv_season_episode_response.dart';
 
 abstract class TvRemoteDataSource {
-  Future<List<TvModel>> getOnTheAirTvs();
-  Future<List<TvModel>> getPopularTvs(int? page);
-  Future<List<TvModel>> getTopRatedTvs(int? page);
+  Future<List<TvModel>?> getOnTheAirTvs();
+  Future<List<TvModel>?> getPopularTvs(int? page);
+  Future<List<TvModel>?> getTopRatedTvs(int? page);
   Future<TvDetailResponse> getTvDetail(int id);
-  Future<List<TvSeasonEpisodeModel>> getTvSeasonEpisodes(
+  Future<List<TvSeasonEpisodeModel>?> getTvSeasonEpisodes(
     int id,
     int seasonNumber,
   );
-  Future<List<TvModel>> getTvRecommendations(int id);
-  Future<List<TvModel>> searchTvs(String query);
+  Future<List<TvModel>?> getTvRecommendations(int id);
+  Future<List<TvModel>?> searchTvs(String query);
   Future<MediaTvImageModel> getTvImages(int id);
 }
 
@@ -29,7 +29,7 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   final ApiService client;
 
   @override
-  Future<List<TvModel>> getOnTheAirTvs() async {
+  Future<List<TvModel>?> getOnTheAirTvs() async {
     try {
       final TvResponse response = await client.getOnTheAirTvs();
       return response.tvList;
@@ -41,7 +41,7 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   }
 
   @override
-  Future<List<TvModel>> getPopularTvs(int? page) async {
+  Future<List<TvModel>?> getPopularTvs(int? page) async {
     try {
       final TvResponse response = await client.getPopularTvs(page: page ?? 1);
       return response.tvList;
@@ -53,7 +53,7 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   }
 
   @override
-  Future<List<TvModel>> getTopRatedTvs(int? page) async {
+  Future<List<TvModel>?> getTopRatedTvs(int? page) async {
     try {
       final TvResponse response = await client.getTopRatedTvs(page: page ?? 1);
       return response.tvList;
@@ -77,7 +77,7 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   }
 
   @override
-  Future<List<TvSeasonEpisodeModel>> getTvSeasonEpisodes(
+  Future<List<TvSeasonEpisodeModel>?> getTvSeasonEpisodes(
     int id,
     int seasonNumber,
   ) async {
@@ -95,7 +95,7 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   }
 
   @override
-  Future<List<TvModel>> getTvRecommendations(int id) async {
+  Future<List<TvModel>?> getTvRecommendations(int id) async {
     try {
       final TvResponse response = await client.getTvRecommendations(id: id);
       return response.tvList;
@@ -107,7 +107,7 @@ class TvRemoteDataSourceImpl implements TvRemoteDataSource {
   }
 
   @override
-  Future<List<TvModel>> searchTvs(String query) async {
+  Future<List<TvModel>?> searchTvs(String query) async {
     try {
       final TvResponse response = await client.searchTvs(query: query);
       return response.tvList;

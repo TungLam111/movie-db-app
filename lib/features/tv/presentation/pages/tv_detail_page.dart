@@ -91,7 +91,7 @@ class _TvDetailPageState extends State<TvDetailPage> {
                 if (tv == null) return const SizedBox();
                 return TvDetailContent(
                   tv: tv,
-                  seasonNumber: tv.numberOfSeasons,
+                  seasonNumber: tv.numberOfSeasons ?? 0,
                   isAddedToWatchlist: _tvDetailBloc.isAddedToWatchlist,
                 );
               },
@@ -181,7 +181,7 @@ class _TvDetailContentState extends State<TvDetailContent>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    widget.tv.name,
+                    widget.tv.name ?? '',
                     style: StylesConstant.kHeading5.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -200,7 +200,9 @@ class _TvDetailContentState extends State<TvDetailContent>
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         child: Text(
-                          widget.tv.firstAirDate.split('-')[0],
+                          widget.tv.firstAirDate != null
+                              ? widget.tv.firstAirDate!.split('-')[0]
+                              : '',
                           style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w500,
@@ -217,7 +219,10 @@ class _TvDetailContentState extends State<TvDetailContent>
                           ),
                           const SizedBox(width: 4.0),
                           Text(
-                            (widget.tv.voteAverage / 2).toStringAsFixed(1),
+                            widget.tv.voteAverage != null
+                                ? (widget.tv.voteAverage! / 2)
+                                    .toStringAsFixed(1)
+                                : '',
                             style: const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
@@ -247,8 +252,8 @@ class _TvDetailContentState extends State<TvDetailContent>
                       ),
                       const SizedBox(width: 16.0),
                       Text(
-                        widget.tv.episodeRunTime.isNotEmpty
-                            ? _showEpisodeDuration(widget.tv.episodeRunTime[0])
+                        widget.tv.episodeRunTime?.isNotEmpty == true
+                            ? _showEpisodeDuration(widget.tv.episodeRunTime![0])
                             : '',
                         style: const TextStyle(
                           color: Colors.white70,
@@ -306,7 +311,7 @@ class _TvDetailContentState extends State<TvDetailContent>
                   ),
                   const SizedBox(height: 16.0),
                   Text(
-                    widget.tv.overview,
+                    widget.tv.overview ?? '',
                     style: const TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.w400,
@@ -315,7 +320,7 @@ class _TvDetailContentState extends State<TvDetailContent>
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    'Genres: ${_showGenres(widget.tv.genres)}',
+                    'Genres: ${_showGenres(widget.tv.genres ?? <Genre>[])}',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 12.0,
@@ -666,11 +671,14 @@ class _TvDetailContentState extends State<TvDetailContent>
                                           ),
                                         ),
                                         Text(
-                                          DateFormat('MMM dd, yyyy').format(
-                                            DateTime.parse(
-                                              seasonEpisode.airDate,
-                                            ),
-                                          ),
+                                          seasonEpisode.airDate != null
+                                              ? DateFormat('MMM dd, yyyy')
+                                                  .format(
+                                                  DateTime.parse(
+                                                    seasonEpisode.airDate!,
+                                                  ),
+                                                )
+                                              : '',
                                           style: const TextStyle(
                                             color: Colors.white70,
                                             fontSize: 12.0,
@@ -685,7 +693,7 @@ class _TvDetailContentState extends State<TvDetailContent>
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  seasonEpisode.overview,
+                                  seasonEpisode.overview ?? '',
                                   style: const TextStyle(
                                     color: Colors.white70,
                                     fontSize: 10.0,

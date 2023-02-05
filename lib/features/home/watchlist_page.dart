@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
@@ -92,11 +91,7 @@ class _WatchlistPageState extends State<_WatchlistPage>
       appBar: AppBar(title: const Text('Watchlist')),
       body: OBCupertinoTabScaffold(
         tabBuilder: (BuildContext context, int index) {
-          return CupertinoTabView(
-            builder: (BuildContext context) {
-              return _getPageForTabIndex(index);
-            },
-          );
+          return  _getPageForTabIndex(index);
         },
         tabBar: _createTabBar(),
       ),

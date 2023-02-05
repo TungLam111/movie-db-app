@@ -8,12 +8,12 @@ import 'package:mock_bloc_stream/features/movie/data/models/movie_model.dart';
 import 'package:mock_bloc_stream/features/movie/data/models/movie_response.dart';
 
 abstract class MovieRemoteDataSource {
-  Future<List<MovieModel>> getNowPlayingMovies();
-  Future<List<MovieModel>> getPopularMovies(int? page);
-  Future<List<MovieModel>> getTopRatedMovies(int? page);
+  Future<List<MovieModel>?> getNowPlayingMovies();
+  Future<List<MovieModel>?> getPopularMovies(int? page);
+  Future<List<MovieModel>?> getTopRatedMovies(int? page);
   Future<MovieDetailResponse> getMovieDetail(int id);
-  Future<List<MovieModel>> getMovieRecommendations(int id);
-  Future<List<MovieModel>> searchMovies(String query);
+  Future<List<MovieModel>?> getMovieRecommendations(int id);
+  Future<List<MovieModel>?> searchMovies(String query);
   Future<MediaMovieImageModel> getMovieImages(int id);
 }
 
@@ -22,7 +22,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   final ApiService client;
 
   @override
-  Future<List<MovieModel>> getNowPlayingMovies() async {
+  Future<List<MovieModel>?> getNowPlayingMovies() async {
     try {
       final MovieResponse response = await client.getNowPlayingMovies();
       return response.movieList;
@@ -34,7 +34,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   }
 
   @override
-  Future<List<MovieModel>> getPopularMovies(int? page) async {
+  Future<List<MovieModel>?> getPopularMovies(int? page) async {
     try {
       final MovieResponse response =
           await client.getPopularMovies(page: page ?? 1);
@@ -47,7 +47,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   }
 
   @override
-  Future<List<MovieModel>> getTopRatedMovies(int? page) async {
+  Future<List<MovieModel>?> getTopRatedMovies(int? page) async {
     try {
       final MovieResponse response =
           await client.getTopRatedMovies(page: page ?? 1);
@@ -72,7 +72,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   }
 
   @override
-  Future<List<MovieModel>> getMovieRecommendations(int id) async {
+  Future<List<MovieModel>?> getMovieRecommendations(int id) async {
     try {
       final MovieResponse response =
           await client.getMovieRecommendations(id: id);
@@ -85,7 +85,7 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
   }
 
   @override
-  Future<List<MovieModel>> searchMovies(String query) async {
+  Future<List<MovieModel>?> searchMovies(String query) async {
     try {
       final MovieResponse response = await client.searchMovies(query: query);
       return response.movieList;

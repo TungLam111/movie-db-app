@@ -1,7 +1,7 @@
 import 'package:mock_bloc_stream/utils/common_util.dart';
 
-import '../models/movie_table.dart';
-import 'db/movie_database_helper.dart';
+import 'package:mock_bloc_stream/features/movie/data/models/movie_table.dart';
+import 'package:mock_bloc_stream/features/movie/data/datasources/db/movie_database_helper.dart';
 
 abstract class MovieLocalDataSource {
   Future<String> insertWatchlist(MovieTable movie);

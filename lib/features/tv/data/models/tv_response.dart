@@ -1,8 +1,6 @@
-import 'package:equatable/equatable.dart';
-
 import 'tv_model.dart';
 
-class TvResponse extends Equatable {
+class TvResponse {
   factory TvResponse.fromJson(Map<String, dynamic> json) => TvResponse(
         tvList: List<TvModel>.from(
           (json['results'] as List<dynamic>)
@@ -15,12 +13,11 @@ class TvResponse extends Equatable {
       );
 
   const TvResponse({required this.tvList});
-  final List<TvModel> tvList;
+  final List<TvModel>? tvList;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'results': List<dynamic>.from(tvList.map((TvModel x) => x.toJson())),
+        'results': List<dynamic>.from(
+          (tvList ?? <TvModel>[]).map((TvModel x) => x.toJson()),
+        ),
       };
-
-  @override
-  List<Object?> get props => <Object?>[tvList];
 }

@@ -1,6 +1,6 @@
-import 'package:equatable/equatable.dart';
+import 'package:mock_bloc_stream/features/tv/data/models/media_tv_image_model.dart';
 
-class MediaImage extends Equatable {
+class MediaImage {
   const MediaImage({
     required this.id,
     required this.backdropPaths,
@@ -8,11 +8,7 @@ class MediaImage extends Equatable {
     required this.posterPaths,
   });
   final int id;
-  final List<String> backdropPaths;
-  final List<String> logoPaths;
-  final List<String> posterPaths;
-
-  @override
-  List<Object?> get props =>
-      <Object?>[id, backdropPaths, logoPaths, posterPaths];
+  final List<BackDrop>? backdropPaths;
+  final List<Logo>? logoPaths;
+  final List<Poster>? posterPaths;
 }

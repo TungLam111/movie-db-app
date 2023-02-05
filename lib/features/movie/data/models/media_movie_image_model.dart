@@ -1,33 +1,70 @@
-import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import '../../domain/entities/media_image.dart';
 
-class MediaMovieImageModel extends Equatable {
-  factory MediaMovieImageModel.fromJson(Map<String, dynamic> json) =>
-      MediaMovieImageModel(
-        id: json['id'] as int,
-        backdropPaths: List<String>.from(
-          (json['backdrops'] as List<dynamic>)
-              .map((dynamic x) => x['file_path']),
-        ),
-        logoPaths: List<String>.from(
-          (json['logos'] as List<dynamic>).map((dynamic x) => x['file_path']),
-        ),
-        posterPaths: List<String>.from(
-          (json['posters'] as List<dynamic>).map((dynamic x) => x['file_path']),
-        ),
-      );
+part 'media_movie_image_model.g.dart';
 
+@JsonSerializable()
+class BackDrop {
+  BackDrop({
+    required this.filePath,
+  });
+  factory BackDrop.fromJson(Map<String, dynamic> json) =>
+      _$BackDropFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BackDropToJson(this);
+
+  @JsonKey(name: 'file_path')
+  String? filePath;
+}
+
+@JsonSerializable()
+class Logo {
+  Logo({
+    required this.filePath,
+  });
+  factory Logo.fromJson(Map<String, dynamic> json) => _$LogoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LogoToJson(this);
+  @JsonKey(name: 'file_path')
+  String? filePath;
+}
+
+@JsonSerializable()
+class Poster {
+  Poster({
+    required this.filePath,
+  });
+  factory Poster.fromJson(Map<String, dynamic> json) => _$PosterFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PosterToJson(this);
+  @JsonKey(name: 'file_path')
+  String? filePath;
+}
+
+@JsonSerializable()
+class MediaMovieImageModel {
   const MediaMovieImageModel({
     required this.id,
     required this.backdropPaths,
     required this.logoPaths,
     required this.posterPaths,
   });
+
+  factory MediaMovieImageModel.fromJson(Map<String, dynamic> json) =>
+      _$MediaMovieImageModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MediaMovieImageModelToJson(this);
   final int id;
-  final List<String> backdropPaths;
-  final List<String> logoPaths;
-  final List<String> posterPaths;
+
+  @JsonKey(name: 'backdrops')
+  final List<BackDrop>? backdropPaths;
+
+  @JsonKey(name: 'logos')
+  final List<Logo>? logoPaths;
+
+  @JsonKey(name: 'posters')
+  final List<Poster>? posterPaths;
 
   MediaImage toEntity() => MediaImage(
         id: id,
@@ -35,12 +72,4 @@ class MediaMovieImageModel extends Equatable {
         logoPaths: logoPaths,
         posterPaths: posterPaths,
       );
-
-  @override
-  List<Object?> get props => <Object?>[
-        id,
-        backdropPaths,
-        logoPaths,
-        posterPaths,
-      ];
 }

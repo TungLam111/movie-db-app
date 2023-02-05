@@ -238,8 +238,9 @@ class _MainTvPageState extends State<_MainTvPage> {
                                               if (imageSnap2.data == null) {
                                                 return const SizedBox();
                                               }
-                                              if (imageSnap2
-                                                  .data!.logoPaths.isEmpty) {
+                                              if (imageSnap2.data!.logoPaths
+                                                      ?.isEmpty ==
+                                                  true) {
                                                 return Text(
                                                   item.name!,
                                                 );
@@ -247,7 +248,9 @@ class _MainTvPageState extends State<_MainTvPage> {
                                               return CachedNetworkImage(
                                                 width: 200.0,
                                                 imageUrl: Urls.imageUrl(
-                                                  imageSnap2.data!.logoPaths[0],
+                                                  imageSnap2.data!.logoPaths![0]
+                                                          .filePath ??
+                                                      '',
                                                 ),
                                               );
                                             },

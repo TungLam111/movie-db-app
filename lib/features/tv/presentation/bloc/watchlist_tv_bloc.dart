@@ -45,9 +45,6 @@ class WatchlistTvBloc extends BaseBloc {
           if (value.isSuccess()) {
             temp = value.data!;
           }
-          if (accumulated is List) {
-            return <Tv>[...(accumulated as List<Tv>), ...temp];
-          }
           return <Tv>[...temp];
         },
         0,

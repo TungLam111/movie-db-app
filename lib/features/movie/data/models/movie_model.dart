@@ -1,21 +1,10 @@
-import 'package:equatable/equatable.dart';
-
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
 
-class MovieModel extends Equatable {
-  factory MovieModel.fromJson(Map<String, dynamic> json) => MovieModel(
-        backdropPath: json['backdrop_path'] as String?,
-        genreIds: List<int>.from(
-          (json['genre_ids'] as List<dynamic>).map((dynamic x) => x as int),
-        ),
-        id: json['id'] as int,
-        overview: json['overview'] as String,
-        posterPath: json['poster_path'] as String?,
-        releaseDate: json['release_date'] as String,
-        title: json['title'] as String,
-        voteAverage: (json['vote_average'] as num).toDouble(),
-        voteCount: json['vote_count'] as int,
-      );
+part 'movie_model.g.dart';
+
+@JsonSerializable()
+class MovieModel {
 
   const MovieModel({
     required this.backdropPath,
@@ -28,27 +17,32 @@ class MovieModel extends Equatable {
     required this.voteAverage,
     required this.voteCount,
   });
-  final String? backdropPath;
-  final List<int> genreIds;
-  final int id;
-  final String overview;
-  final String? posterPath;
-  final String releaseDate;
-  final String title;
-  final double voteAverage;
-  final int voteCount;
+  factory MovieModel.fromJson(Map<String, dynamic> json) =>
+      _$MovieModelFromJson(json);
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'backdrop_path': backdropPath,
-        'genre_ids': List<dynamic>.from(genreIds.map((int x) => x)),
-        'id': id,
-        'overview': overview,
-        'poster_path': posterPath,
-        'release_date': releaseDate,
-        'title': title,
-        'vote_average': voteAverage,
-        'vote_count': voteCount,
-      };
+  Map<String, dynamic> toJson() => _$MovieModelToJson(this);
+
+  @JsonKey(name: 'backdrop_path')
+  final String? backdropPath;
+
+  @JsonKey(name: 'genre_ids')
+  final List<int>? genreIds;
+
+  final int id;
+  final String? overview;
+
+  @JsonKey(name: 'poster_path')
+  final String? posterPath;
+
+  @JsonKey(name: 'release_date')
+  final String? releaseDate;
+  final String? title;
+
+  @JsonKey(name: 'vote_average')
+  final double? voteAverage;
+
+  @JsonKey(name: 'vote_count')
+  final int? voteCount;
 
   Movie toEntity() => Movie(
         backdropPath: backdropPath,
@@ -61,17 +55,4 @@ class MovieModel extends Equatable {
         voteAverage: voteAverage,
         voteCount: voteCount,
       );
-
-  @override
-  List<Object?> get props => <Object?>[
-        backdropPath,
-        genreIds,
-        id,
-        overview,
-        posterPath,
-        releaseDate,
-        title,
-        voteAverage,
-        voteCount,
-      ];
 }

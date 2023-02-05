@@ -127,7 +127,6 @@ class _MainMoviePageState extends State<_MainMoviePage> {
           return const ShimmerPlayingWidget();
         }
         if (snap1.data == RequestState.loaded) {
-
           return RequiredStreamBuilder<List<Movie>>(
             stream: _movieListBloc.nowPlayingMoviesStream,
             builder: (_, AsyncSnapshot<List<Movie>> snap2) {
@@ -255,8 +254,9 @@ class _MainMoviePageState extends State<_MainMoviePage> {
                                                   ),
                                                 );
                                               }
-                                              if (snapshot2
-                                                  .data!.logoPaths.isEmpty) {
+                                              if (snapshot2.data!.logoPaths
+                                                      ?.isEmpty ==
+                                                  true) {
                                                 return Text(
                                                   item.title!,
                                                 );
@@ -264,7 +264,8 @@ class _MainMoviePageState extends State<_MainMoviePage> {
                                               return CachedNetworkImage(
                                                 width: 200.0,
                                                 imageUrl: Urls.imageUrl(
-                                                  snapshot2.data!.logoPaths[0],
+                                                  snapshot2.data!.logoPaths![0]
+                                                      .filePath!,
                                                 ),
                                               );
                                             },

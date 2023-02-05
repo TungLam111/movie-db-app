@@ -30,7 +30,7 @@ class MovieDetailContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                movie.title,
+                movie.title ?? '',
                 style: StylesConstant.kHeading5.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -49,7 +49,9 @@ class MovieDetailContent extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     child: Text(
-                      movie.releaseDate.split('-')[0],
+                      movie.releaseDate != null
+                          ? movie.releaseDate!.split('-')[0]
+                          : '',
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w500,
@@ -66,7 +68,9 @@ class MovieDetailContent extends StatelessWidget {
                       ),
                       const SizedBox(width: 4.0),
                       Text(
-                        (movie.voteAverage / 2).toStringAsFixed(1),
+                        movie.voteAverage != null
+                            ? (movie.voteAverage! / 2).toStringAsFixed(1)
+                            : '',
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -86,7 +90,7 @@ class MovieDetailContent extends StatelessWidget {
                   ),
                   const SizedBox(width: 16.0),
                   Text(
-                    _showDuration(movie.runtime),
+                    movie.runtime != null ? _showDuration(movie.runtime!) : '',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 16.0,
@@ -159,7 +163,7 @@ class MovieDetailContent extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Text(
-                movie.overview,
+                movie.overview ?? '',
                 style: const TextStyle(
                   fontSize: 14.0,
                   fontWeight: FontWeight.w400,
@@ -168,7 +172,9 @@ class MovieDetailContent extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                'Genres: ${_showGenres(movie.genres)}',
+                movie.genres != null
+                    ? 'Genres: ${_showGenres(movie.genres!)}'
+                    : '',
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12.0,

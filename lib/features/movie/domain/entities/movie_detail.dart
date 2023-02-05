@@ -1,7 +1,6 @@
-import 'package:equatable/equatable.dart';
-import 'genre.dart';
+import 'package:mock_bloc_stream/features/movie/domain/entities/genre.dart';
 
-class MovieDetail extends Equatable {
+class MovieDetail {
   const MovieDetail({
     required this.backdropPath,
     required this.genres,
@@ -15,26 +14,13 @@ class MovieDetail extends Equatable {
     required this.voteCount,
   });
   final String? backdropPath;
-  final List<Genre> genres;
+  final List<Genre>? genres;
   final int id;
-  final String overview;
+  final String? overview;
   final String? posterPath;
-  final String releaseDate;
-  final int runtime;
-  final String title;
-  final double voteAverage;
-  final int voteCount;
-
-  @override
-  List<Object?> get props => <Object?>[
-        backdropPath,
-        genres,
-        id,
-        overview,
-        posterPath,
-        releaseDate,
-        title,
-        voteAverage,
-        voteCount,
-      ];
+  final String? releaseDate;
+  final int? runtime;
+  final String? title;
+  final double? voteAverage;
+  final int? voteCount;
 }

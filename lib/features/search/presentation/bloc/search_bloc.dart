@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:equatable/equatable.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';

@@ -25,7 +25,7 @@ class MovieRepositoryImpl implements MovieRepository {
   Future<DataState<List<Movie>>> getNowPlayingMovies() async {
     try {
       final List<MovieModel> result =
-          await remoteDataSource.getNowPlayingMovies();
+          (await remoteDataSource.getNowPlayingMovies()) ?? <MovieModel>[];
       return DataSuccess<List<Movie>>(
         result.map((MovieModel model) => model.toEntity()).toList(),
       );
@@ -41,10 +41,12 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<DataState<List<Movie>>> getPopularMovies(int? page) async {
     try {
-      final List<MovieModel> result =
+      final List<MovieModel>? result =
           await remoteDataSource.getPopularMovies(page);
       return DataSuccess<List<Movie>>(
-        result.map((MovieModel model) => model.toEntity()).toList(),
+        (result ?? <MovieModel>[])
+            .map((MovieModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Movie>>(ServerException());
@@ -58,10 +60,12 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<DataState<List<Movie>>> getTopRatedMovies(int? page) async {
     try {
-      final List<MovieModel> result =
+      final List<MovieModel>? result =
           await remoteDataSource.getTopRatedMovies(page);
       return DataSuccess<List<Movie>>(
-        result.map((MovieModel model) => model.toEntity()).toList(),
+        (result ?? <MovieModel>[])
+            .map((MovieModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Movie>>(ServerException());
@@ -90,10 +94,12 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<DataState<List<Movie>>> getMovieRecommendations(int id) async {
     try {
-      final List<MovieModel> result =
+      final List<MovieModel>? result =
           await remoteDataSource.getMovieRecommendations(id);
       return DataSuccess<List<Movie>>(
-        result.map((MovieModel model) => model.toEntity()).toList(),
+        (result ?? <MovieModel>[])
+            .map((MovieModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Movie>>(ServerException());
@@ -107,10 +113,12 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<DataState<List<Movie>>> searchMovies(String query) async {
     try {
-      final List<MovieModel> result =
+      final List<MovieModel>? result =
           await remoteDataSource.searchMovies(query);
       return DataSuccess<List<Movie>>(
-        result.map((MovieModel model) => model.toEntity()).toList(),
+        (result ?? <MovieModel>[])
+            .map((MovieModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Movie>>(ServerException());

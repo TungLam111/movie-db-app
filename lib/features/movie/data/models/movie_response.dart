@@ -1,8 +1,6 @@
-import 'package:equatable/equatable.dart';
-
 import 'movie_model.dart';
 
-class MovieResponse extends Equatable {
+class MovieResponse {
   const MovieResponse({required this.movieList});
 
   factory MovieResponse.fromJson(Map<String, dynamic> json) => MovieResponse(
@@ -17,13 +15,12 @@ class MovieResponse extends Equatable {
               ),
         ),
       );
-  final List<MovieModel> movieList;
+
+  final List<MovieModel>? movieList;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'results':
-            List<dynamic>.from(movieList.map((MovieModel x) => x.toJson())),
+        'results': List<dynamic>.from(
+          (movieList ?? <MovieModel>[]).map((MovieModel x) => x.toJson()),
+        ),
       };
-
-  @override
-  List<Object> get props => <Object>[movieList];
 }

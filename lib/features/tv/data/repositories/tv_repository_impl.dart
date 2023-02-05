@@ -11,9 +11,11 @@ class TvRepositoryImpl implements TvRepository {
   @override
   Future<DataState<List<Tv>>> getOnTheAirTvs() async {
     try {
-      final List<TvModel> result = await remoteDataSource.getOnTheAirTvs();
+      final List<TvModel>? result = await remoteDataSource.getOnTheAirTvs();
       return DataSuccess<List<Tv>>(
-        result.map((TvModel model) => model.toEntity()).toList(),
+        (result ?? <TvModel>[])
+            .map((TvModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Tv>>(ServerException());
@@ -27,9 +29,11 @@ class TvRepositoryImpl implements TvRepository {
   @override
   Future<DataState<List<Tv>>> getPopularTvs(int? page) async {
     try {
-      final List<TvModel> result = await remoteDataSource.getPopularTvs(page);
+      final List<TvModel>? result = await remoteDataSource.getPopularTvs(page);
       return DataSuccess<List<Tv>>(
-        result.map((TvModel model) => model.toEntity()).toList(),
+        (result ?? <TvModel>[])
+            .map((TvModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Tv>>(ServerException());
@@ -43,9 +47,11 @@ class TvRepositoryImpl implements TvRepository {
   @override
   Future<DataState<List<Tv>>> getTopRatedTvs(int? page) async {
     try {
-      final List<TvModel> result = await remoteDataSource.getTopRatedTvs(page);
+      final List<TvModel>? result = await remoteDataSource.getTopRatedTvs(page);
       return DataSuccess<List<Tv>>(
-        result.map((TvModel model) => model.toEntity()).toList(),
+        (result ?? <TvModel>[])
+            .map((TvModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Tv>>(ServerException());
@@ -76,10 +82,12 @@ class TvRepositoryImpl implements TvRepository {
     int seasonNumber,
   ) async {
     try {
-      final List<TvSeasonEpisodeModel> result =
+      final List<TvSeasonEpisodeModel>? result =
           await remoteDataSource.getTvSeasonEpisodes(id, seasonNumber);
       return DataSuccess<List<TvSeasonEpisode>>(
-        result.map((TvSeasonEpisodeModel model) => model.toEntity()).toList(),
+        (result ?? <TvSeasonEpisodeModel>[])
+            .map((TvSeasonEpisodeModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<TvSeasonEpisode>>(ServerException());
@@ -93,10 +101,12 @@ class TvRepositoryImpl implements TvRepository {
   @override
   Future<DataState<List<Tv>>> getTvRecommendations(int id) async {
     try {
-      final List<TvModel> result =
+      final List<TvModel>? result =
           await remoteDataSource.getTvRecommendations(id);
       return DataSuccess<List<Tv>>(
-        result.map((TvModel model) => model.toEntity()).toList(),
+        (result ?? <TvModel>[])
+            .map((TvModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Tv>>(ServerException());
@@ -110,9 +120,11 @@ class TvRepositoryImpl implements TvRepository {
   @override
   Future<DataState<List<Tv>>> searchTvs(String query) async {
     try {
-      final List<TvModel> result = await remoteDataSource.searchTvs(query);
+      final List<TvModel>? result = await remoteDataSource.searchTvs(query);
       return DataSuccess<List<Tv>>(
-        result.map((TvModel model) => model.toEntity()).toList(),
+        (result ?? <TvModel>[])
+            .map((TvModel model) => model.toEntity())
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Tv>>(ServerException());
