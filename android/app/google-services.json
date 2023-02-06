@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "953677166111",
+    "project_id": "vietnamtravelapp",
+    "storage_bucket": "vietnamtravelapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953677166111:android:b42ae7372078062ffac72a",
+        "android_client_info": {
+          "package_name": "com.example.flutter_vietnam_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "953677166111-7paoqi2lc1darbsnnq35os1asktbdurn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_vietnam_app",
+            "certificate_hash": "d09e90e9a4aa61ff225c5ca8aeb1e2471572d950"
+          }
+        },
+        {
+          "client_id": "953677166111-ou7jhn8uhvpog5h4n5j6bb8bfbjmi30d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD38T4r-dm2193VtylfdI4MWPE6_ZBY6Qs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953677166111-ou7jhn8uhvpog5h4n5j6bb8bfbjmi30d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953677166111:android:1f9ddafe28564776fac72a",
+        "android_client_info": {
+          "package_name": "com.example.mock_bloc_stream"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "953677166111-ou7jhn8uhvpog5h4n5j6bb8bfbjmi30d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD38T4r-dm2193VtylfdI4MWPE6_ZBY6Qs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953677166111-ou7jhn8uhvpog5h4n5j6bb8bfbjmi30d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953677166111:android:34ddd2e6eac90a4dfac72a",
+        "android_client_info": {
+          "package_name": "com.tunglam.vietnamtravel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "953677166111-ou7jhn8uhvpog5h4n5j6bb8bfbjmi30d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD38T4r-dm2193VtylfdI4MWPE6_ZBY6Qs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953677166111-ou7jhn8uhvpog5h4n5j6bb8bfbjmi30d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

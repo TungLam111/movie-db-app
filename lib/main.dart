@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mock_bloc_stream/core/config/config.dart';
 import 'package:mock_bloc_stream/core/config/env/network_config.dart';
+import 'package:mock_bloc_stream/core/config/firebase/config.dart';
 import 'package:mock_bloc_stream/core/config/router.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
 import 'package:mock_bloc_stream/core/base/app_bloc.dart';
@@ -14,13 +15,26 @@ import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 
 main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await AppConfig().configApp(buildMode: BuildMode.stagging);
+  await FirebaseConfiguration.initFirebaseConfiguration();
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void didChangeDependencies() {
+    FirebaseConfiguration.initEvent(context);
+
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {

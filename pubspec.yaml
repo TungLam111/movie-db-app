@@ -15,7 +15,6 @@ environment:
 
 dependencies:
   animate_do: ^2.1.0
-  #flutter_bloc: ^8.0.0
   cached_network_image: ^3.2.0
   carousel_slider: ^4.0.0
   cupertino_icons: ^1.0.4
@@ -29,7 +28,6 @@ dependencies:
   http: ^0.13.4
   intl: ^0.17.0
   path_provider: ^2.0.8
-  #provider: ^6.0.2
   shimmer: ^2.0.0
   sqflite: ^2.0.1
   rxdart:
@@ -41,9 +39,12 @@ dependencies:
   flutter_easyloading: ^3.0.5
   built_value: ^8.4.3
   built_collection: ^5.1.1
-
+  firebase_remote_config: ^3.0.9
+  firebase_messaging: ^14.2.1
+  firebase_core: ^2.4.1
+  permission_handler: ^10.2.0
+  
 dev_dependencies:
-  #bloc_test: ^9.0.2
   build_runner: ^2.1.7
   flutter_lints: ^2.0.0
   flutter_test:
