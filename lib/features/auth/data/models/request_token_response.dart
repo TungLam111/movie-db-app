@@ -1,8 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 part 'request_token_response.g.dart';
 
 @JsonSerializable()
-class RequestTokenResponse {
+class RequestTokenResponse extends AppModel {
   RequestTokenResponse({
     this.expiresAt,
     this.requestToken,

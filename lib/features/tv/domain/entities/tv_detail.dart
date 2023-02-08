@@ -1,7 +1,9 @@
-import 'genre.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
-class TvDetail {
-  const TvDetail({
+import 'package:mock_bloc_stream/features/tv/domain/entities/genre.dart';
+
+class TvDetail extends AppEntity{
+   TvDetail({
     required this.backdropPath,
     required this.episodeRunTime,
     required this.firstAirDate,

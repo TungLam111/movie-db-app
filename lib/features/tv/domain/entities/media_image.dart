@@ -1,7 +1,8 @@
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 import 'package:mock_bloc_stream/features/tv/data/models/media_tv_image_model.dart';
 
-class MediaImage {
-  const MediaImage({
+class MediaImage extends AppEntity{
+   MediaImage({
     required this.id,
     required this.backdropPaths,
     required this.logoPaths,

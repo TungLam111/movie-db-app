@@ -1,11 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
-import '../../domain/entities/media_image.dart';
 
 part 'media_movie_image_model.g.dart';
 
 @JsonSerializable()
-class BackDrop {
+class BackDrop extends AppModel {
   BackDrop({
     required this.filePath,
   });
@@ -19,7 +19,7 @@ class BackDrop {
 }
 
 @JsonSerializable()
-class Logo {
+class Logo extends AppModel {
   Logo({
     required this.filePath,
   });
@@ -31,7 +31,7 @@ class Logo {
 }
 
 @JsonSerializable()
-class Poster {
+class Poster extends AppModel {
   Poster({
     required this.filePath,
   });
@@ -43,8 +43,8 @@ class Poster {
 }
 
 @JsonSerializable()
-class MediaMovieImageModel {
-  const MediaMovieImageModel({
+class MediaMovieImageModel extends AppModel {
+  MediaMovieImageModel({
     required this.id,
     required this.backdropPaths,
     required this.logoPaths,
@@ -66,10 +66,4 @@ class MediaMovieImageModel {
   @JsonKey(name: 'posters')
   final List<Poster>? posterPaths;
 
-  MediaImage toEntity() => MediaImage(
-        id: id,
-        backdropPaths: backdropPaths,
-        logoPaths: logoPaths,
-        posterPaths: posterPaths,
-      );
 }

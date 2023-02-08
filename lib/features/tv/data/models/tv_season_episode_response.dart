@@ -1,6 +1,8 @@
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
+
 import 'tv_season_episode_model.dart';
 
-class TvSeasonEpisodeResponse {
+class TvSeasonEpisodeResponse extends AppModel {
   factory TvSeasonEpisodeResponse.fromJson(Map<String, dynamic> json) =>
       TvSeasonEpisodeResponse(
         tvEpisodes: List<TvSeasonEpisodeModel>.from(
@@ -15,7 +17,7 @@ class TvSeasonEpisodeResponse {
         ),
       );
 
-  const TvSeasonEpisodeResponse({
+  TvSeasonEpisodeResponse({
     required this.tvEpisodes,
   });
   final List<TvSeasonEpisodeModel>? tvEpisodes;

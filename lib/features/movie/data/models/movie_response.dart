@@ -1,7 +1,9 @@
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
+
 import 'movie_model.dart';
 
-class MovieResponse {
-  const MovieResponse({required this.movieList});
+class MovieResponse  extends AppModel{
+   MovieResponse({required this.movieList});
 
   factory MovieResponse.fromJson(Map<String, dynamic> json) => MovieResponse(
         movieList: List<MovieModel>.from(

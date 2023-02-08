@@ -1,12 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
 import '../../domain/entities/tv_season_episode.dart';
 
 part 'tv_season_episode_model.g.dart';
 
 @JsonSerializable()
-class TvSeasonEpisodeModel {
-  const TvSeasonEpisodeModel({
+class TvSeasonEpisodeModel extends AppModel {
+  TvSeasonEpisodeModel({
     required this.airDate,
     required this.episodeNumber,
     required this.id,

@@ -1,4 +1,6 @@
-class Movie {
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
+
+class Movie extends AppEntity {
   Movie({
     required this.backdropPath,
     required this.genreIds,

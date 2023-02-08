@@ -160,8 +160,6 @@ class _MainMoviePageState extends State<_MainMoviePage> {
                             context: context,
                             builder: (BuildContext context) {
                               return MinimalDetail(
-                                keyValue: 'goToMovieDetail',
-                                closeKeyValue: 'closeMovieMinimalDetail',
                                 movie: item,
                               );
                             },

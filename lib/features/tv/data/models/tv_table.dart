@@ -1,11 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
 import '../../domain/entities/tv.dart';
 import '../../domain/entities/tv_detail.dart';
 part 'tv_table.g.dart';
 
 @JsonSerializable()
-class TvTable {
+class TvTable extends AppModel {
   factory TvTable.fromEntity(TvDetail tv) => TvTable(
         firstAirDate: tv.firstAirDate,
         id: tv.id,
@@ -15,7 +16,7 @@ class TvTable {
         voteAverage: tv.voteAverage,
       );
 
-  const TvTable({
+  TvTable({
     required this.firstAirDate,
     required this.id,
     required this.name,

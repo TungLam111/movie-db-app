@@ -1,7 +1,9 @@
 
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
+
 import '../../domain/entities/tv.dart';
 
-class TvModel {
+class TvModel extends AppModel{
   factory TvModel.fromJson(Map<String, dynamic> json) => TvModel(
         backdropPath: json['backdrop_path'] as String?,
         firstAirDate: json['first_air_date'] as String,
@@ -16,7 +18,7 @@ class TvModel {
         voteCount: json['vote_count'] as int,
       );
 
-  const TvModel({
+   TvModel({
     required this.backdropPath,
     required this.firstAirDate,
     required this.genreIds,

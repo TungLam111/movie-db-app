@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:mock_bloc_stream/core/base/data_state.dart';
+import 'package:mock_bloc_stream/core/extension/mapper.dart';
 import 'package:mock_bloc_stream/features/movie/data/models/movie_model.dart';
 import 'package:mock_bloc_stream/features/movie/data/models/movie_detail_response.dart';
 import 'package:mock_bloc_stream/features/movie/data/models/media_movie_image_model.dart';
@@ -27,7 +28,12 @@ class MovieRepositoryImpl implements MovieRepository {
       final List<MovieModel> result =
           (await remoteDataSource.getNowPlayingMovies()) ?? <MovieModel>[];
       return DataSuccess<List<Movie>>(
-        result.map((MovieModel model) => model.toEntity()).toList(),
+        result
+            .map(
+              (MovieModel model) =>
+                  Mapper.modelToEntity<MovieModel, Movie>(model)!,
+            )
+            .toList(),
       );
     } on ServerException {
       return DataFailed<List<Movie>>(ServerException());
@@ -45,7 +51,10 @@ class MovieRepositoryImpl implements MovieRepository {
           await remoteDataSource.getPopularMovies(page);
       return DataSuccess<List<Movie>>(
         (result ?? <MovieModel>[])
-            .map((MovieModel model) => model.toEntity())
+            .map(
+              (MovieModel model) =>
+                  Mapper.modelToEntity<MovieModel, Movie>(model)!,
+            )
             .toList(),
       );
     } on ServerException {
@@ -64,7 +73,10 @@ class MovieRepositoryImpl implements MovieRepository {
           await remoteDataSource.getTopRatedMovies(page);
       return DataSuccess<List<Movie>>(
         (result ?? <MovieModel>[])
-            .map((MovieModel model) => model.toEntity())
+            .map(
+              (MovieModel model) =>
+                  Mapper.modelToEntity<MovieModel, Movie>(model)!,
+            )
             .toList(),
       );
     } on ServerException {
@@ -81,7 +93,9 @@ class MovieRepositoryImpl implements MovieRepository {
     try {
       final MovieDetailResponse result =
           await remoteDataSource.getMovieDetail(id);
-      return DataSuccess<MovieDetail>(result.toEntity());
+      return DataSuccess<MovieDetail>(
+        Mapper.modelToEntity<MovieDetailResponse, MovieDetail>(result)!,
+      );
     } on ServerException {
       return DataFailed<MovieDetail>(ServerException());
     } on SocketException {
@@ -98,7 +112,10 @@ class MovieRepositoryImpl implements MovieRepository {
           await remoteDataSource.getMovieRecommendations(id);
       return DataSuccess<List<Movie>>(
         (result ?? <MovieModel>[])
-            .map((MovieModel model) => model.toEntity())
+            .map(
+              (MovieModel model) =>
+                  Mapper.modelToEntity<MovieModel, Movie>(model)!,
+            )
             .toList(),
       );
     } on ServerException {
@@ -117,7 +134,10 @@ class MovieRepositoryImpl implements MovieRepository {
           await remoteDataSource.searchMovies(query);
       return DataSuccess<List<Movie>>(
         (result ?? <MovieModel>[])
-            .map((MovieModel model) => model.toEntity())
+            .map(
+              (MovieModel model) =>
+                  Mapper.modelToEntity<MovieModel, Movie>(model)!,
+            )
             .toList(),
       );
     } on ServerException {
@@ -134,7 +154,9 @@ class MovieRepositoryImpl implements MovieRepository {
     try {
       final MediaMovieImageModel result =
           await remoteDataSource.getMovieImages(id);
-      return DataSuccess<MediaImage>(result.toEntity());
+      return DataSuccess<MediaImage>(
+        Mapper.modelToEntity<MediaMovieImageModel, MediaImage>(result)!,
+      );
     } on ServerException {
       return DataFailed<MediaImage>(ServerException());
     } on SocketException {
@@ -179,7 +201,11 @@ class MovieRepositoryImpl implements MovieRepository {
     final List<MovieTable> result =
         await localDataSource.getWatchlistMovies(page);
     return DataSuccess<List<Movie>>(
-      result.map((MovieTable data) => data.toEntity()).toList(),
+      result
+          .map(
+            (MovieTable data) => Mapper.modelToEntity<MovieTable, Movie>(data)!,
+          )
+          .toList(),
     );
   }
 }

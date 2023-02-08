@@ -1,4 +1,6 @@
-class ReqLogin {
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
+
+class ReqLogin extends AppModel{
   ReqLogin({
     this.password,
     this.requestToken,

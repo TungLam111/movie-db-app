@@ -1,5 +1,6 @@
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
-class Tv {
+class Tv extends AppEntity {
   Tv({
     required this.backdropPath,
     required this.firstAirDate,
@@ -29,6 +30,4 @@ class Tv {
   String? posterPath;
   double? voteAverage;
   int? voteCount;
-
-
 }

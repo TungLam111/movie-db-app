@@ -8,12 +8,8 @@ import '../pages/tv_detail_page.dart';
 class MinimalDetail extends StatelessWidget {
   const MinimalDetail({
     Key? key,
-    this.keyValue,
-    this.closeKeyValue,
     required this.tv,
   }) : super(key: key);
-  final String? keyValue;
-  final String? closeKeyValue;
   final Tv tv;
 
   @override

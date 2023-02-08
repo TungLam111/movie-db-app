@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
 part 'session_with_login.g.dart';
 
 @JsonSerializable()
-class SessionWithLoginResponse {
+class SessionWithLoginResponse extends AppModel {
   SessionWithLoginResponse({
     this.expiresAt,
     this.guestSessionId,

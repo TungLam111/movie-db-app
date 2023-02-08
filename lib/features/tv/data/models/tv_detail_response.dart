@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
 import '../../domain/entities/tv_detail.dart';
 import 'genre_model.dart';
@@ -6,8 +7,8 @@ import 'genre_model.dart';
 part 'tv_detail_response.g.dart';
 
 @JsonSerializable()
-class TvDetailResponse {
-  const TvDetailResponse({
+class TvDetailResponse extends AppModel {
+  TvDetailResponse({
     required this.backdropPath,
     required this.episodeRunTime,
     required this.firstAirDate,

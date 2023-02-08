@@ -1,7 +1,8 @@
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/genre.dart';
 
-class MovieDetail {
-  const MovieDetail({
+class MovieDetail extends AppEntity{
+   MovieDetail({
     required this.backdropPath,
     required this.genres,
     required this.id,

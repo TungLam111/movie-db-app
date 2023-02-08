@@ -1,12 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../../domain/entities/movie.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 import '../../domain/entities/movie_detail.dart';
 
 part 'movie_table.g.dart';
 
 @JsonSerializable()
-class MovieTable {
+class MovieTable extends AppModel {
   factory MovieTable.fromEntity(MovieDetail movie) => MovieTable(
         releaseDate: movie.releaseDate,
         id: movie.id,
@@ -16,7 +15,7 @@ class MovieTable {
         voteAverage: movie.voteAverage,
       );
 
-  const MovieTable({
+  MovieTable({
     required this.releaseDate,
     required this.id,
     required this.title,
@@ -30,21 +29,10 @@ class MovieTable {
 
   Map<String, dynamic> toMap() => _$MovieTableToJson(this);
 
-
   final String? releaseDate;
   final int id;
   final String? title;
   final String? posterPath;
   final String? overview;
   final double? voteAverage;
-
-
-  Movie toEntity() => Movie.watchlist(
-        releaseDate: releaseDate,
-        id: id,
-        overview: overview,
-        posterPath: posterPath,
-        title: title,
-        voteAverage: voteAverage,
-      );
 }

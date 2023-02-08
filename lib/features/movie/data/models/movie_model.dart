@@ -1,12 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
 part 'movie_model.g.dart';
 
 @JsonSerializable()
-class MovieModel {
-
-  const MovieModel({
+class MovieModel extends AppModel {
+  MovieModel({
     required this.backdropPath,
     required this.genreIds,
     required this.id,
@@ -43,16 +42,4 @@ class MovieModel {
 
   @JsonKey(name: 'vote_count')
   final int? voteCount;
-
-  Movie toEntity() => Movie(
-        backdropPath: backdropPath,
-        genreIds: genreIds,
-        id: id,
-        overview: overview,
-        posterPath: posterPath,
-        releaseDate: releaseDate,
-        title: title,
-        voteAverage: voteAverage,
-        voteCount: voteCount,
-      );
 }

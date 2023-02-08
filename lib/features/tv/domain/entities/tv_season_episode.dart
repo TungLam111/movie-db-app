@@ -1,5 +1,7 @@
-class TvSeasonEpisode {
-  const TvSeasonEpisode({
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
+
+class TvSeasonEpisode extends AppEntity {
+  TvSeasonEpisode({
     required this.airDate,
     required this.episodeNumber,
     required this.id,

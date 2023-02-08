@@ -8,12 +8,8 @@ import '../pages/movie_detail_page.dart';
 class MinimalDetail extends StatelessWidget {
   const MinimalDetail({
     Key? key,
-    this.keyValue,
-    this.closeKeyValue,
     required this.movie,
   }) : super(key: key);
-  final String? keyValue;
-  final String? closeKeyValue;
   final Movie movie;
 
   @override

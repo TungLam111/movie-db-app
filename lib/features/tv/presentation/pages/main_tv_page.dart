@@ -150,7 +150,6 @@ class _MainTvPageState extends State<_MainTvPage> {
                             context: context,
                             builder: (BuildContext context) {
                               return MinimalDetail(
-                                closeKeyValue: 'closeTvMinimalDetail',
                                 tv: item,
                               );
                             },

@@ -1,11 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mock_bloc_stream/features/movie/domain/entities/genre.dart';
+import 'package:mock_bloc_stream/core/extension/base_model.dart';
 
 part 'genre_model.g.dart';
 
 @JsonSerializable()
-class GenreModel {
-  const GenreModel({
+class GenreModel extends AppModel{
+   GenreModel({
     required this.id,
     required this.name,
   });
@@ -16,9 +16,4 @@ class GenreModel {
 
   final int? id;
   final String? name;
-
-  Genre toEntity() => Genre(
-        id: id,
-        name: name,
-      );
 }
