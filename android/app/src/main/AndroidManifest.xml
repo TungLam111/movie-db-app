@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mock_bloc_stream">
+    <uses-permission android:name="android.permission.INTERNET" />
+
    <application
         android:label="mock_bloc_stream"
         android:name="${applicationName}"
@@ -35,5 +37,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            
     </application>
 </manifest>

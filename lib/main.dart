@@ -14,6 +14,9 @@ import 'package:mock_bloc_stream/utils/color.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 
+
+//keytool -v -list -keystore mykeystore.jks
+
 main() async {
   await AppConfig().configApp(buildMode: BuildMode.stagging);
   await FirebaseConfiguration.initFirebaseConfiguration();
