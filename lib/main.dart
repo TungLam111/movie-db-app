@@ -14,7 +14,7 @@ import 'package:mock_bloc_stream/utils/color.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 
-
+//keytool -genkey -v -keystore ~/upload-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload -storetype JKS
 //keytool -v -list -keystore mykeystore.jks
 
 main() async {
