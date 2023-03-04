@@ -1,33 +1,31 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
-import 'package:stream_transform/stream_transform.dart';
 
-abstract class Failure extends Equatable {
-  const Failure(this.message);
-  final String message;
+// abstract class Failure extends Equatable {
+//   const Failure(this.message);
+//   final String message;
 
-  @override
-  List<Object> get props => <Object>[message];
+//   @override
+//   List<Object> get props => <Object>[message];
+// }
+
+// class ServerFailure extends Failure {
+//   const ServerFailure(String message) : super(message);
+// }
+
+// class ConnectionFailure extends Failure {
+//   const ConnectionFailure(String message) : super(message);
+// }
+
+// class DatabaseFailure extends Failure {
+//   const DatabaseFailure(String message) : super(message);
+// }
+
+class ServerException implements Exception {
+  ServerException();
 }
-
-class ServerFailure extends Failure {
-  const ServerFailure(String message) : super(message);
-}
-
-class ConnectionFailure extends Failure {
-  const ConnectionFailure(String message) : super(message);
-}
-
-class DatabaseFailure extends Failure {
-  const DatabaseFailure(String message) : super(message);
-}
-
-class ServerException implements Exception {}
 
 class DatabaseException implements Exception {
   DatabaseException(this.message);
@@ -36,12 +34,6 @@ class DatabaseException implements Exception {
 
 final RouteObserver<ModalRoute<dynamic>> routeObserver =
     RouteObserver<ModalRoute<dynamic>>();
-
-EventTransformer<E> debounce<E>(Duration duration) {
-  return (Stream<E> events, Stream<E> Function(E) mapper) {
-    return events.debounce(duration).switchMap(mapper);
-  };
-}
 
 class RequiredStreamBuilder<T> extends StreamBuilder<T> {
   const RequiredStreamBuilder({
@@ -102,3 +94,14 @@ typedef CustomItemBuilder<T> = Widget Function(
   T item,
   int index,
 );
+
+showCustomDialog(BuildContext context, String event) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(event),
+      );
+    },
+  );
+}

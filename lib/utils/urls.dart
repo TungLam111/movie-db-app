@@ -5,4 +5,7 @@ class Urls {
   /// Image
   static const String baseImageUrl = 'https://image.tmdb.org/t/p/w500';
   static String imageUrl(String path) => '$baseImageUrl$path';
+
+  static const int kConnectionTimeOutInMilliSecond = 30000;
+  static const int kReceivingTimeOutInMilliSecond = 30000;
 }

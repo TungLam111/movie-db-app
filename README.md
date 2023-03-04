@@ -1,5 +1,5 @@
-# mock_bloc_stream
+# movie-db-app
 
 - Authentication
-- Notification (testing)
-- Testing
+- Notification (One signal)
+- Chat (? with Firebase)
