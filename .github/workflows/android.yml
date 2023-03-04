@@ -34,4 +34,4 @@ jobs:
         run: flutter analyze .
 
       - name: Start release build
-        run: flutter build appbundle -- flavor dev
+        run: flutter build appbundle --flavor dev
