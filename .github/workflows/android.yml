@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: ["lamtungphd-new"]
+    branches: ["dev"]
   pull_request:
-    branches: ["lamtungphd-new"]
+    branches: ["dev"]
 
 jobs:
   build:
