@@ -6,10 +6,10 @@ class HomeBloc extends BaseBloc {
   HomeBloc() {
     _stateSubject.stream.listen(_onStateChange);
   }
-  final BehaviorSubject<GeneralContentType> _stateSubject =
-      BehaviorSubject<GeneralContentType>.seeded(GeneralContentType.movie);
+  final BehaviorSubject<HomePageTab> _stateSubject =
+      BehaviorSubject<HomePageTab>.seeded(HomePageTab.movie);
 
-  Stream<GeneralContentType> get stateStream => _stateSubject.stream;
+  Stream<HomePageTab> get stateStream => _stateSubject.stream;
 
   @override
   void dispose() {
@@ -17,9 +17,9 @@ class HomeBloc extends BaseBloc {
     super.dispose();
   }
 
-  void _onStateChange(GeneralContentType newState) {}
+  void _onStateChange(HomePageTab newState) {}
 
-  void setState(GeneralContentType newState) {
+  void setState(HomePageTab newState) {
     _stateSubject.add(newState);
   }
 }

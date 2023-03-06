@@ -44,29 +44,26 @@ class HorizontalItemList extends StatelessWidget {
                   },
                 );
               },
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                child: CachedNetworkImage(
-                  width: 120.0,
-                  fit: BoxFit.cover,
-                  imageUrl: Urls.imageUrl(movie.posterPath!),
-                  placeholder: (BuildContext context, String url) =>
-                      Shimmer.fromColors(
-                    baseColor: ColorConstant.kGrey850,
-                    highlightColor: ColorConstant.kGrey800,
-                    child: Container(
-                      height: 170.0,
-                      width: 120.0,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
+              child: CachedNetworkImage(
+                width: 120.0,
+                fit: BoxFit.cover,
+                imageUrl: Urls.imageUrl(movie.posterPath!),
+                placeholder: (BuildContext context, String url) =>
+                    Shimmer.fromColors(
+                  baseColor: ColorConstant.kGrey850,
+                  highlightColor: ColorConstant.kGrey800,
+                  child: Container(
+                    height: 170.0,
+                    width: 120.0,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  errorWidget:
-                      (BuildContext context, String url, dynamic error) =>
-                          const Icon(Icons.error),
                 ),
+                errorWidget:
+                    (BuildContext context, String url, dynamic error) =>
+                        const Icon(Icons.error),
               ),
             ),
           );

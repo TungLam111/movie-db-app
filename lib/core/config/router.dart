@@ -6,6 +6,7 @@ import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
 import 'package:mock_bloc_stream/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mock_bloc_stream/features/auth/presentation/pages/login_page.dart';
 import 'package:mock_bloc_stream/features/home/home_page.dart';
+import 'package:mock_bloc_stream/features/home/watchlist_page.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_detail/movie_detail_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/popular_movies/popular_movies_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/top_rated_movies/top_rated_movies_bloc.dart';
@@ -116,6 +117,11 @@ class AppRouter {
             bloc: locator<TvSearchBloc>(),
             child: const TvSearchPage(),
           ),
+        );
+
+      case WatchlistPage.routeName:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => const WatchlistPage(),
         );
       default:
         return _errorRoute();

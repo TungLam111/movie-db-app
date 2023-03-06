@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/utils/color.dart';
+import 'package:mock_bloc_stream/widgets/navigation_bar.dart';
 
 const double _kTabBarHeight = 50.0;
 
@@ -19,7 +20,7 @@ class OBCupertinoTabBar extends StatelessWidget implements PreferredSizeWidget {
         assert(0 <= currentIndex && currentIndex < items.length),
         super(key: key);
 
-  final List<BottomNavigationBarItem> items;
+  final List<CustomBottomNavigationItem> items;
   final ChangeIndexAllowed<int> onTap;
 
   final int currentIndex;

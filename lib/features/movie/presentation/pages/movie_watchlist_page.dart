@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
@@ -13,6 +15,7 @@ class MovieWatchlist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log('rebuild movie watch');
     return RequiredStreamBuilder<TupleEx2<List<Movie>, RequestState>>(
       stream: BlocProvider.of<WatchlistMovieBloc>(context).tupleStream,
       builder: (

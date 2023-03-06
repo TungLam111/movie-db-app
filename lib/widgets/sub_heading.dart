@@ -29,8 +29,7 @@ class SubHeading extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: const <Widget>[
-                  Text('See More'),
-                  Icon(Icons.arrow_forward_ios, size: 16.0)
+                  Text('Show all'),
                 ],
               ),
             ),
