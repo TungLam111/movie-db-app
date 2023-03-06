@@ -4,19 +4,20 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
+import 'package:mock_bloc_stream/features/home/watchlist_page.dart';
 import 'package:mock_bloc_stream/features/tv/domain/entities/media_image.dart';
 import 'package:mock_bloc_stream/features/tv/domain/entities/tv.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_images_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_list_bloc.dart';
-import 'package:mock_bloc_stream/features/tv/presentation/widgets/shimmer_playing_tv_loading_widget.dart';
 import 'package:mock_bloc_stream/injection/di_locator.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/urls.dart';
 import 'package:mock_bloc_stream/widgets/shimmer_loading_widget.dart';
+import 'package:mock_bloc_stream/widgets/shimmer_playing_widget.dart';
 import '../widgets/horizontal_item_list.dart';
 import '../widgets/minimal_detail.dart';
-import '../widgets/sub_heading.dart';
+import '../../../../widgets/sub_heading.dart';
 import 'popular_tvs_page.dart';
 import 'top_rated_tvs_page.dart';
 
@@ -82,6 +83,20 @@ class _MainTvPageState extends State<_MainTvPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tv'),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: InkWell(
+              child: const Icon(Icons.bookmark),
+              onTap: () {
+                Navigator.of(context).pushNamed(WatchlistPage.routeName);
+              },
+            ),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +137,7 @@ class _MainTvPageState extends State<_MainTvPage> {
             stream: _tvListBloc.onTheAirTvsStream,
             builder: (__, AsyncSnapshot<List<Tv>> snap2) {
               if (!snap2.hasData) {
-                return const ShimmerPlayingTvLoadingWidget();
+                return const ShimmerPlayingWidget();
               }
               return FadeIn(
                 duration: const Duration(milliseconds: 500),
@@ -284,7 +299,7 @@ class _MainTvPageState extends State<_MainTvPage> {
         } else if (snap1.data == RequestState.error) {
           return const Center(child: Text('Load data failed'));
         } else {
-          return const ShimmerPlayingTvLoadingWidget();
+          return const ShimmerPlayingWidget();
         }
       },
     );

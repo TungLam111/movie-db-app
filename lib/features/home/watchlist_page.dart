@@ -10,10 +10,13 @@ import 'package:mock_bloc_stream/features/tv/presentation/bloc/watchlist_tv_bloc
 import 'package:mock_bloc_stream/features/tv/presentation/pages/tv_watchlist_page.dart';
 import 'package:mock_bloc_stream/injection/di_locator.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
+import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
+import 'package:mock_bloc_stream/widgets/navigation_bar.dart';
 
 class WatchlistPage extends StatelessWidget {
   const WatchlistPage({super.key});
+  static const String routeName = '/watch-list';
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,6 @@ class _WatchlistPageState extends State<_WatchlistPage>
     with RouteAware, SingleTickerProviderStateMixin<_WatchlistPage> {
   late WatchlistMovieBloc _movieBloc;
   late WatchlistTvBloc _tvBloc;
-  ValueNotifier<int> valueTabView = ValueNotifier<int>(0);
   late int _currentIndex;
   late int _lastIndex;
 
@@ -79,7 +81,6 @@ class _WatchlistPageState extends State<_WatchlistPage>
   void dispose() {
     _movieBloc.dispose();
     _tvBloc.dispose();
-    valueTabView.dispose();
     routeObserver.unsubscribe(this);
     super.dispose();
   }
@@ -91,7 +92,7 @@ class _WatchlistPageState extends State<_WatchlistPage>
       appBar: AppBar(title: const Text('Watchlist')),
       body: OBCupertinoTabScaffold(
         tabBuilder: (BuildContext context, int index) {
-          return  _getPageForTabIndex(index);
+          return _getPageForTabIndex(index);
         },
         tabBar: _createTabBar(),
       ),
@@ -100,11 +101,11 @@ class _WatchlistPageState extends State<_WatchlistPage>
 
   Widget _getPageForTabIndex(int index) {
     Widget? page;
-    switch (OBHomePageTabs.values[index]) {
-      case OBHomePageTabs.movie:
+    switch (WatchListTabType.values[index]) {
+      case WatchListTabType.movie:
         page = const MovieWatchlist();
         break;
-      case OBHomePageTabs.tv:
+      case WatchListTabType.tv:
         page = const TvWatchlist();
         break;
       default:
@@ -120,25 +121,25 @@ class _WatchlistPageState extends State<_WatchlistPage>
       backgroundColor: Colors.white,
       currentIndex: _currentIndex,
       onTap: (int index) {
-        OBHomePageTabs tappedTab = OBHomePageTabs.values[index];
-        OBHomePageTabs currentTab = OBHomePageTabs.values[_lastIndex];
+        WatchListTabType tappedTab = WatchListTabType.values[index];
+        WatchListTabType currentTab = WatchListTabType.values[_lastIndex];
 
-        if (tappedTab == OBHomePageTabs.movie &&
-            currentTab == OBHomePageTabs.movie) {}
+        if (tappedTab == WatchListTabType.movie &&
+            currentTab == WatchListTabType.movie) {}
 
-        if (tappedTab == OBHomePageTabs.tv &&
-            currentTab == OBHomePageTabs.tv) {}
+        if (tappedTab == WatchListTabType.tv &&
+            currentTab == WatchListTabType.tv) {}
         _lastIndex = index;
         return true;
       },
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
+      items: <CustomBottomNavigationItem>[
+        CustomBottomNavigationItem(
           icon: Text(
             'Movie',
             style: StylesConstant.ts16w400,
           ),
         ),
-        BottomNavigationBarItem(
+        CustomBottomNavigationItem(
           icon: Text(
             'Tv',
             style: StylesConstant.ts16w400,
@@ -148,5 +149,3 @@ class _WatchlistPageState extends State<_WatchlistPage>
     );
   }
 }
-
-enum OBHomePageTabs { movie, tv }

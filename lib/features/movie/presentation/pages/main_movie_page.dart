@@ -4,22 +4,22 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
+import 'package:mock_bloc_stream/features/home/watchlist_page.dart';
 import 'package:mock_bloc_stream/injection/di_locator.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/media_image.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_images/movie_images_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_list/movie_list_bloc.dart';
-import 'package:mock_bloc_stream/features/movie/presentation/widgets/shimmer_playing_widget.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:mock_bloc_stream/utils/urls.dart';
 import 'package:mock_bloc_stream/widgets/shimmer_loading_widget.dart';
-
 import 'package:mock_bloc_stream/features/movie/presentation/widgets/horizontal_item_list.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/widgets/minimal_detail.dart';
-import 'package:mock_bloc_stream/features/movie/presentation/widgets/sub_heading.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/pages/popular_movies_page.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/pages/top_rated_movies_page.dart';
+import 'package:mock_bloc_stream/widgets/shimmer_playing_widget.dart';
+import 'package:mock_bloc_stream/widgets/sub_heading.dart';
 
 class MainMoviePage extends StatelessWidget {
   const MainMoviePage({Key? key}) : super(key: key);
@@ -82,13 +82,26 @@ class _MainMoviePageState extends State<_MainMoviePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Movie'),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: InkWell(
+              child: const Icon(Icons.bookmark),
+              onTap: () {
+                Navigator.of(context).pushNamed(WatchlistPage.routeName);
+              },
+            ),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildNowPlaying(),
             SubHeading(
-              valueKey: 'seePopularMovies',
               text: 'Popular',
               onSeeMoreTapped: () => Navigator.pushNamed(
                 context,
@@ -97,7 +110,6 @@ class _MainMoviePageState extends State<_MainMoviePage> {
             ),
             _buildPopularMovie(),
             SubHeading(
-              valueKey: 'seeTopRatedMovies',
               text: 'Top Rated',
               onSeeMoreTapped: () => Navigator.pushNamed(
                 context,

@@ -23,9 +23,8 @@ class ShimmerLoadingWidget extends StatelessWidget {
               child: Container(
                 height: 170.0,
                 width: 120.0,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.black,
-                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
             ),
