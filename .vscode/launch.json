@@ -4,11 +4,32 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
             "name": "movie-db-app",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "dev"
+            ]
+        },
+        {
+            "name": "movie-db-app",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "stag"
+            ]
+        },
+        {
+            "name": "movie-db-app",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "prod"
+            ]
         },
         {
             "name": "movie-db-app (profile mode)",
