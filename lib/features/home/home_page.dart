@@ -19,8 +19,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with RouteAware, SingleTickerProviderStateMixin<HomePage> {
+class _HomePageState extends State<HomePage> with RouteAware {
   late HomeBloc _homeBloc;
   late int _currentIndex;
   late int _lastIndex;
@@ -39,10 +38,9 @@ class _HomePageState extends State<HomePage>
   @override
   void didChangeDependencies() {
     _homeBloc = BlocProvider.of<HomeBloc>(context);
-    super.didChangeDependencies();
-
     _currentIndex = 0;
     _lastIndex = 0;
+    super.didChangeDependencies();
   }
 
   void disposeStream() {
