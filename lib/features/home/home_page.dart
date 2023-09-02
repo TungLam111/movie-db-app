@@ -256,7 +256,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               }
                               final GeneralContentType state = sns.data!;
                               if (state == GeneralContentType.movie) {
-                                return const MainMoviePage();
+                                return MainMoviePage(
+                                  args: MainMovieArgs(),
+                                );
                               } else if (state == GeneralContentType.tv) {
                                 return const MainTvPage();
                               } else if (state ==

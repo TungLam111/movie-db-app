@@ -12,6 +12,8 @@ import 'package:mock_bloc_stream/injection/di_locator.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
 import 'package:mock_bloc_stream/utils/styles.dart';
 
+
+
 class WatchlistPage extends StatelessWidget {
   const WatchlistPage({super.key});
 
