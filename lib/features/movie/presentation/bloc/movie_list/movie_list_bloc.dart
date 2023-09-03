@@ -1,6 +1,8 @@
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/core/base/data_state.dart';
 import 'package:mock_bloc_stream/core/extension/extension.dart';
+import 'package:mock_bloc_stream/features/movie/domain/entities/media_image.dart';
+import 'package:mock_bloc_stream/features/movie/domain/usecases/get_movie_images_usecase.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -27,13 +29,19 @@ class MovieListBloc extends BaseBloc {
     required this.nowPlayingStateStream,
     required this.popularMoviesStateStream,
     required this.topRatedMoviesStateStream,
+    required this.getMovieImagesUsecase,
     required this.whatToDispose,
+    required this.getMediaImageStream,
+    required this.addMediaImages,
+    required this.addMovieImagesState,
+    required this.getMovieImagesStateStream,
   });
 
   factory MovieListBloc({
     required GetNowPlayingMoviesUsecase getNowPlayingMoviesUsecase,
     required GetPopularMoviesUsecase getPopularMoviesUsecase,
     required GetTopRatedMoviesUsecase getTopRatedMoviesUsecase,
+    required GetMovieImagesUsecase getMovieImagesUsecase,
   }) {
     final BehaviorSubject<List<Movie>> nowPlayingMoviesSubject =
         BehaviorSubject<List<Movie>>.seeded(<Movie>[]);
@@ -51,6 +59,12 @@ class MovieListBloc extends BaseBloc {
         BehaviorSubject<RequestState>.seeded(RequestState.empty);
 
     final BehaviorSubject<RequestState> topRatedStateSubject =
+        BehaviorSubject<RequestState>.seeded(RequestState.empty);
+
+    final BehaviorSubject<MediaImage?> movieImagesSubject =
+        BehaviorSubject<MediaImage?>.seeded(null);
+
+    final BehaviorSubject<RequestState> movieImagesStateSubject =
         BehaviorSubject<RequestState>.seeded(RequestState.empty);
 
     getCurrentNowPlaying() => nowPlayingMoviesSubject.value;
@@ -72,6 +86,7 @@ class MovieListBloc extends BaseBloc {
       nowPlayingStateStream: nowPlayingStateSubject.stream,
       popularMoviesStateStream: popularStateSubject.stream,
       topRatedMoviesStateStream: topRatedStateSubject.stream,
+      getMediaImageStream: movieImagesSubject.stream,
       whatToDispose: () {
         nowPlayingMoviesSubject.close();
         popularMoviesSubject.close();
@@ -80,6 +95,10 @@ class MovieListBloc extends BaseBloc {
         popularStateSubject.close();
         topRatedStateSubject.close();
       },
+      addMediaImages: movieImagesSubject.add,
+      addMovieImagesState: movieImagesStateSubject.add,
+      getMovieImagesStateStream: movieImagesStateSubject.stream,
+      getMovieImagesUsecase: getMovieImagesUsecase,
     );
   }
 
@@ -104,9 +123,16 @@ class MovieListBloc extends BaseBloc {
   final FunctionEx1<RequestState, void> addTopRatedMoviesState;
   Stream<RequestState> topRatedMoviesStateStream;
 
+  final FunctionEx1<MediaImage?, void> addMediaImages;
+  Stream<MediaImage?> getMediaImageStream;
+
+  final FunctionEx1<RequestState, void> addMovieImagesState;
+  Stream<RequestState> getMovieImagesStateStream;
+
   final GetNowPlayingMoviesUsecase getNowPlayingMoviesUsecase;
   final GetPopularMoviesUsecase getPopularMoviesUsecase;
   final GetTopRatedMoviesUsecase getTopRatedMoviesUsecase;
+  final GetMovieImagesUsecase getMovieImagesUsecase;
 
   Future<void> fetchNowPlayingMovies() async {
     addNowPlayingState(RequestState.loading);
@@ -119,7 +145,7 @@ class MovieListBloc extends BaseBloc {
       messageSubject.add(result.err);
     } else {
       addNowPlayingState(RequestState.loaded);
-      addNowPlayingMovies.call(result.data!);
+      addNowPlayingMovies(result.data!);
     }
   }
 
@@ -141,13 +167,27 @@ class MovieListBloc extends BaseBloc {
     addTopRatedMoviesState(RequestState.loading);
 
     final DataState<List<Movie>> result =
-        await getTopRatedMoviesUsecase.execute(null);
+        await getTopRatedMoviesUsecase.execute(1);
     if (result.isError()) {
       addTopRatedMoviesState(RequestState.error);
       messageSubject.add(result.err);
     } else {
       addTopRatedMoviesState(RequestState.loaded);
       addTopRatedMovies(result.data!);
+    }
+  }
+
+  Future<void> fetchMovieImages(int id) async {
+    addMovieImagesState(RequestState.loading);
+
+    final DataState<MediaImage> result =
+        await getMovieImagesUsecase.execute(id);
+    if (result.isError()) {
+      addMovieImagesState(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      addMovieImagesState(RequestState.loaded);
+      addMediaImages(result.data);
     }
   }
 

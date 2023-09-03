@@ -16,7 +16,6 @@ import 'package:mock_bloc_stream/features/movie/domain/usecases/get_watchlist_mo
 import 'package:mock_bloc_stream/features/movie/domain/usecases/remove_watchlist_movie_usecase.dart';
 import 'package:mock_bloc_stream/features/movie/domain/usecases/save_watchlist_movie.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_detail/movie_detail_bloc.dart';
-import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_images/movie_images_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_list/movie_list_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/popular_movies/popular_movies_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/top_rated_movies/top_rated_movies_bloc.dart';
@@ -41,7 +40,6 @@ import 'package:mock_bloc_stream/features/tv/domain/usecases/save_watchlist_tv_u
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/popular_tvs_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/top_rated_tvs_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_detail_bloc.dart';
-import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_images_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_list_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/tv_season_episodes_bloc.dart';
 import 'package:mock_bloc_stream/features/tv/presentation/bloc/watchlist_tv_bloc.dart';
@@ -88,7 +86,7 @@ class OpenbookProviderState extends State<OpenbookProvider> {
   late GetTvWatchlistStatusUsecase getTvWatchlistStatus;
   late GetMovieWatchlistStatusUsecase getMovieWatchlistStatusUseCase;
   late GetWatchlistTvsUsecase getWatchlistTvsUsecase;
-  late GetTvImagesUsecase getTvImages;
+  late GetTvImagesUsecase getTvImagesUsecase;
   late SearchTvsUsecase searchTvsUseCase;
   late GetTvRecommendationsUsecase getTvRecommendationsUsecase;
   late GetTvSeasonEpisodesUsecase getTvSeasonEpisodesUsecase;
@@ -106,13 +104,11 @@ class OpenbookProviderState extends State<OpenbookProvider> {
   late GetNowPlayingMoviesUsecase getNowPlayingMoviesUseCase;
 
   late WatchlistTvBloc watchlistTvBloc;
-  late TvImagesBloc tvImagesBloc;
   late TvSeasonEpisodesBloc tvSeasonEpisodesBloc;
   late TvDetailBloc tvDetailBloc;
   late TopRatedTvsBloc topRatedTvsBloc;
   late PopularTvsBloc popularTvsBloc;
   late TvListBloc tvListBloc;
-  late MovieImagesBloc movieImagesBloc;
   late MovieDetailBloc movieDetailBloc;
   late TopRatedMoviesBloc topRatedMoviesBloc;
   late PopularMoviesBloc popularMoviesBloc;
@@ -149,7 +145,7 @@ class OpenbookProviderState extends State<OpenbookProvider> {
     getMovieWatchlistStatusUseCase =
         GetMovieWatchlistStatusUsecase(movieRepository: movieRepository);
     getWatchlistTvsUsecase = GetWatchlistTvsUsecase(tvRepository);
-    getTvImages = GetTvImagesUsecase(tvRepository);
+    getTvImagesUsecase = GetTvImagesUsecase(tvRepository);
     searchTvsUseCase = SearchTvsUsecase(tvRepository);
     getTvRecommendationsUsecase = GetTvRecommendationsUsecase(tvRepository);
     getTvSeasonEpisodesUsecase = GetTvSeasonEpisodesUsecase(tvRepository);
@@ -169,7 +165,6 @@ class OpenbookProviderState extends State<OpenbookProvider> {
 
     watchlistTvBloc =
         WatchlistTvBloc(getWatchlistTvsUsecase: getWatchlistTvsUsecase);
-    tvImagesBloc = TvImagesBloc(getTvImagesUsecase: getTvImages);
     tvSeasonEpisodesBloc =
         TvSeasonEpisodesBloc(getTvSeasonEpisodes: getTvSeasonEpisodesUsecase);
     tvDetailBloc = TvDetailBloc(
@@ -187,10 +182,9 @@ class OpenbookProviderState extends State<OpenbookProvider> {
       getOnTheAirTvsUsecase: getOnTheAirTvsUsecase,
       getPopularTvsUsecase: getPopularTvsUsecase,
       getTopRatedTvsUsecase: getTopRatedTvsUsecase,
+      getTvImagesUsecase: getTvImagesUsecase,
     );
 
-    movieImagesBloc =
-        MovieImagesBloc(getMovieImagesUsecase: getMovieImagesUseCase);
     movieDetailBloc = MovieDetailBloc(
       movieId: 0,
       getMovieDetail: getMovieDetailUseCase,
@@ -206,6 +200,7 @@ class OpenbookProviderState extends State<OpenbookProvider> {
       getNowPlayingMoviesUsecase: getNowPlayingMoviesUseCase,
       getPopularMoviesUsecase: getPopularMoviesUseCase,
       getTopRatedMoviesUsecase: getTopRatedMoviesUseCase,
+      getMovieImagesUsecase: getMovieImagesUseCase,
     );
 
     tvSearchBloc = TvSearchBloc(searchTvsUseCase);

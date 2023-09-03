@@ -260,7 +260,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   args: MainMovieArgs(),
                                 );
                               } else if (state == GeneralContentType.tv) {
-                                return const MainTvPage();
+                                return MainTvPage(
+                                  args: MainTvArgs(),
+                                );
                               } else if (state ==
                                   GeneralContentType.watchlist) {
                                 return const WatchlistPage();

@@ -3,12 +3,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:mock_bloc_stream/core/base/base_view.dart';
-import 'package:mock_bloc_stream/core/base/bloc_provider.dart';
-import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/injection/di_locator.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/media_image.dart';
 import 'package:mock_bloc_stream/features/movie/domain/entities/movie.dart';
-import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_images/movie_images_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/bloc/movie_list/movie_list_bloc.dart';
 import 'package:mock_bloc_stream/features/movie/presentation/widgets/shimmer_playing_widget.dart';
 import 'package:mock_bloc_stream/utils/common_util.dart';
@@ -23,59 +20,52 @@ import 'package:mock_bloc_stream/features/movie/presentation/pages/top_rated_mov
 
 class MainMovieArgs extends BaseArguments {}
 
-class MainMoviePage extends BaseViewMultiProvider<MainMovieArgs> {
+class MainMoviePage extends BaseViewProvider<MovieListBloc, MainMovieArgs> {
   const MainMoviePage({
     super.key,
     required super.args,
   });
 
   @override
-  List<BlocProvider<BaseBloc>> setBlocs() {
-    return <BlocProvider<BaseBloc>>[
-      BlocProvider<MovieListBloc>(
-        bloc: locator<MovieListBloc>(),
-      ),
-      BlocProvider<MovieImagesBloc>(
-        bloc: locator<MovieImagesBloc>(),
-      )
-    ];
-  }
-
-  @override
-  BaseView<MainMovieArgs> setChild(BaseArguments argument) {
+  BaseView<MovieListBloc, MainMovieArgs> setChild(BaseArguments argument) {
     return _MainMoviePage(
       args: argument as MainMovieArgs,
       blocTypes: const <Type>[
         MovieListBloc,
-        MovieImagesBloc,
       ],
     );
   }
+
+  @override
+  MovieListBloc setBlocs() {
+    return locator<MovieListBloc>();
+  }
 }
 
-class _MainMoviePage extends BaseView<MainMovieArgs> {
+class _MainMoviePage extends BaseView<MovieListBloc, MainMovieArgs> {
   const _MainMoviePage({required super.args, required super.blocTypes});
 
   @override
-  BaseViewState<BaseView<MainMovieArgs>, MainMovieArgs> createState() {
+  BaseViewState<BaseView<MovieListBloc, MainMovieArgs>, MovieListBloc,
+      MainMovieArgs> createState() {
     return _MainMoviePageState();
   }
 }
 
-class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
+class _MainMoviePageState
+    extends BaseViewState<_MainMoviePage, MovieListBloc, MainMovieArgs> {
   @override
   void didChangeDependenciesApp(
-    Map<Type, BaseBloc> controller,
     BuildContext context,
   ) {
     Future<void>.microtask(() {
-      getBloc<MovieListBloc>().fetchNowPlayingMovies().whenComplete(
-            () => getBloc<MovieImagesBloc>().fetchMovieImages(
-              getBloc<MovieListBloc>().nowPlayingMoviesF()[0].id,
+      getBloc().fetchNowPlayingMovies().whenComplete(
+            () => getBloc().fetchMovieImages(
+              getBloc().nowPlayingMoviesF()[0].id,
             ),
           );
-      getBloc<MovieListBloc>().fetchPopularMovies();
-      getBloc<MovieListBloc>().fetchTopRatedMovies();
+      getBloc().fetchPopularMovies();
+      getBloc().fetchTopRatedMovies();
     });
   }
 
@@ -84,7 +74,6 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
 
   @override
   Widget buildUI(
-    Map<Type, BaseBloc> controller,
     MainMovieArgs? args,
     BuildContext context,
   ) {
@@ -121,7 +110,7 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
 
   Widget _buildNowPlaying() {
     return RequiredStreamBuilder<RequestState>(
-      stream: getBloc<MovieListBloc>().nowPlayingStateStream,
+      stream: getBloc().nowPlayingStateStream,
       builder: (
         BuildContext context,
         AsyncSnapshot<RequestState> snap1,
@@ -135,7 +124,7 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
         }
         if (snap1.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Movie>>(
-            stream: getBloc<MovieListBloc>().nowPlayingMoviesStream,
+            stream: getBloc().nowPlayingMoviesStream,
             builder: (_, AsyncSnapshot<List<Movie>> snap2) {
               if (!snap2.hasData) {
                 return const ShimmerPlayingWidget();
@@ -148,7 +137,7 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
                     viewportFraction: 1.0,
                     onPageChanged:
                         (int index, CarouselPageChangedReason reason) {
-                      getBloc<MovieImagesBloc>().fetchMovieImages(
+                      getBloc().fetchMovieImages(
                         snap2.data![index].id,
                       );
                     },
@@ -235,8 +224,8 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
                                       bottom: 16.0,
                                     ),
                                     child: RequiredStreamBuilder<RequestState>(
-                                      stream: getBloc<MovieImagesBloc>()
-                                          .getMovieImagesStateStream,
+                                      stream:
+                                          getBloc().getMovieImagesStateStream,
                                       builder: (
                                         _,
                                         AsyncSnapshot<RequestState> snapshot,
@@ -245,8 +234,8 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
                                             RequestState.loaded) {
                                           return RequiredStreamBuilder<
                                               MediaImage?>(
-                                            stream: getBloc<MovieImagesBloc>()
-                                                .getMediaImageStream,
+                                            stream:
+                                                getBloc().getMediaImageStream,
                                             builder: (
                                               __,
                                               AsyncSnapshot<MediaImage?>
@@ -314,14 +303,14 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
 
   Widget _buildPopularMovie() {
     return RequiredStreamBuilder<RequestState>(
-      stream: getBloc<MovieListBloc>().popularMoviesStateStream,
+      stream: getBloc().popularMoviesStateStream,
       builder: (
         BuildContext context,
         AsyncSnapshot<RequestState> snapshot1,
       ) {
         if (snapshot1.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Movie>>(
-            stream: getBloc<MovieListBloc>().popularMoviesStream,
+            stream: getBloc().popularMoviesStream,
             builder: (__, AsyncSnapshot<List<Movie>> snapshot2) {
               if (!snapshot2.hasData) {
                 return const ShimmerLoadingWidget();
@@ -346,14 +335,14 @@ class _MainMoviePageState extends BaseViewState<_MainMoviePage, MainMovieArgs> {
 
   Widget _buildTopRatedMovie() {
     return RequiredStreamBuilder<RequestState>(
-      stream: getBloc<MovieListBloc>().topRatedMoviesStateStream,
+      stream: getBloc().topRatedMoviesStateStream,
       builder: (
         _,
         AsyncSnapshot<RequestState> snapRated1,
       ) {
         if (snapRated1.data == RequestState.loaded) {
           return RequiredStreamBuilder<List<Movie>>(
-            stream: getBloc<MovieListBloc>().topRatedMoviesStream,
+            stream: getBloc().topRatedMoviesStream,
             builder: (__, AsyncSnapshot<List<Movie>> snapRated2) {
               if (!snapRated2.hasData) {
                 return const ShimmerLoadingWidget();

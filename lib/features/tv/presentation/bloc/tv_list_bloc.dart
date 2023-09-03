@@ -1,5 +1,7 @@
 import 'package:mock_bloc_stream/core/base/base_bloc.dart';
 import 'package:mock_bloc_stream/core/base/data_state.dart';
+import 'package:mock_bloc_stream/features/tv/domain/entities/media_image.dart';
+import 'package:mock_bloc_stream/features/tv/domain/usecases/get_tv_images_usecase.dart';
 import 'package:mock_bloc_stream/utils/enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,6 +15,7 @@ class TvListBloc extends BaseBloc {
     required this.getOnTheAirTvsUsecase,
     required this.getPopularTvsUsecase,
     required this.getTopRatedTvsUsecase,
+    required this.getTvImagesUsecase,
   });
   final BehaviorSubject<List<Tv>> _onTheAirTvsSubject =
       BehaviorSubject<List<Tv>>.seeded(<Tv>[]);
@@ -42,9 +45,18 @@ class TvListBloc extends BaseBloc {
   Stream<RequestState> get topRatedTvsStateStream =>
       _topRatedTvsStateSubject.stream;
 
+  final BehaviorSubject<MediaImage?> _tvImagesSubject =
+      BehaviorSubject<MediaImage?>.seeded(null);
+  Stream<MediaImage?> get tvImagesStream => _tvImagesSubject.stream;
+
+  final BehaviorSubject<RequestState> _tvImagesStateSubject =
+      BehaviorSubject<RequestState>.seeded(RequestState.empty);
+  Stream<RequestState> get tvImagesStateStream => _tvImagesStateSubject.stream;
+
   final GetOnTheAirTvsUsecase getOnTheAirTvsUsecase;
   final GetPopularTvsUsecase getPopularTvsUsecase;
   final GetTopRatedTvsUsecase getTopRatedTvsUsecase;
+  final GetTvImagesUsecase getTvImagesUsecase;
 
   Future<void> fetchOnTheAirTvs() async {
     _onTheAirTvsStateSubject.add(RequestState.loading);
@@ -82,6 +94,19 @@ class TvListBloc extends BaseBloc {
     } else {
       _topRatedTvsStateSubject.add(RequestState.loaded);
       _topRatedTvsSubject.add(result.data!);
+    }
+  }
+
+  Future<void> fetchTvImages(int id) async {
+    _tvImagesStateSubject.add(RequestState.loading);
+
+    final DataState<MediaImage> result = await getTvImagesUsecase.execute(id);
+    if (result.isError()) {
+      _tvImagesStateSubject.add(RequestState.error);
+      messageSubject.add(result.err);
+    } else {
+      _tvImagesStateSubject.add(RequestState.loaded);
+      _tvImagesSubject.add(result.data);
     }
   }
 
