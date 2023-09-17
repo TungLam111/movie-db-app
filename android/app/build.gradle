@@ -84,11 +84,6 @@ android {
     flavorDimensions "movie-db"
     productFlavors {
 
-        dev {
-            flavorDimensions "movie-db"
-            applicationId "com.example.mock_bloc_stream"
-        }
-
         stag {
             flavorDimensions "movie-db"
             applicationId "com.example.mock_bloc_stream"
